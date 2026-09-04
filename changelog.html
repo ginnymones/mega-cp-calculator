@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog — Mega Evolution CP Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8 font-sans">
+  <div class="max-w-3xl mx-auto space-y-6">
+    <header class="text-center space-y-2">
+      <h1 class="text-3xl md:text-4xl font-extrabold text-amber-400">Changelog</h1>
+      <p class="text-slate-400 text-sm md:text-base">What's changed in the Mega Evolution CP Calculator</p>
+      <a href="index.html" class="inline-block text-sm text-amber-400 hover:text-amber-300 underline">&larr; Back to calculator</a>
+    </header>
+
+    <main class="space-y-6">
+
+      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-3">
+        <div class="flex items-baseline justify-between flex-wrap gap-2">
+          <h2 class="text-lg font-bold text-slate-100">Super Max Mega, verified stats, and site polish</h2>
+          <span class="text-xs text-slate-500">September 2026</span>
+        </div>
+        <ul class="list-disc list-inside space-y-1.5 text-sm text-slate-300">
+          <li>Confirmed and implemented the real <strong>Super Max Mega (Level 4)</strong> mechanic: it sets a Pokémon's effective level to <em>power-up level + 5</em>, and this <strong>overrides Best Buddy's own +1</strong> rather than stacking with it — verified against in-game screenshots of Mega Mewtwo X, Mega Mewtwo Y, and Mega Dragonite.</li>
+          <li>Added the Super Max option to the Mega Level selector, shown only for Pokémon that actually have it. It's now confirmed available on Mewtwo X, Mewtwo Y, Dragonite, Gyarados, Gengar, and Pidgeot — a wider list than initially assumed, since it turns out Super Max isn't restricted to a fixed species list.</li>
+          <li>Corrected base stats (Attack / Defense / Stamina) for all 61 Mega and Primal Pokémon, sourced from the game's live data rather than guesswork. 18 species had incorrect values in the original dataset.</li>
+          <li>Removed a fictional "Mega Level 4 (+5 flat level boost for everyone)" mechanic from the original build — Mega Level (Base/High/Max) never affects CP on its own; only a fully-invested Super Max tier does.</li>
+          <li>Fixed Mega Alakazam's Defense stat (207 → 206) after solving it precisely from two in-game CP/HP readings at different levels.</li>
+          <li>Verified Mega Steelix, Kangaskhan, Pinsir, Victreebel, Raichu X, and Raichu Y stats against independently published max-CP milestones — all confirmed correct. Earlier CP mismatches for these turned out to be stale level assumptions and imprecise IV readings from older screenshots, not actual data errors.</li>
+          <li>Added a "Max Level" button next to the level slider, and a direct number input alongside it for precise level entry.</li>
+          <li>Added footer credits and this changelog.</li>
+        </ul>
+      </section>
+
+      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-3">
+        <div class="flex items-baseline justify-between flex-wrap gap-2">
+          <h2 class="text-lg font-bold text-slate-100">Initial release</h2>
+          <span class="text-xs text-slate-500">Earlier</span>
+        </div>
+        <ul class="list-disc list-inside space-y-1.5 text-sm text-slate-300">
+          <li>First version of the calculator: select a Pokémon, set level and IVs, and see projected Mega Evolution CP.</li>
+        </ul>
+      </section>
+
+    </main>
+
+    <footer class="text-center text-xs text-slate-500 pt-4 pb-2 space-y-1 border-t border-slate-800">
+      <p>Built by <a href="https://inginnyus.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 underline">reezachi / Ginny Mones</a>, with Claude helping out on the code.</p>
+      <p><a href="index.html" class="text-amber-400 hover:text-amber-300 underline">&larr; Back to calculator</a></p>
+    </footer>
+  </div>
+</body>
+</html>
