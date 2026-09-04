@@ -24,9 +24,9 @@
         </div>
 
         <div>
-          <div class="flex justify-between text-sm font-medium text-slate-300 mb-1">
+          <div class="flex justify-between items-center text-sm font-medium text-slate-300 mb-1">
             <label>Pokémon Level</label>
-            <span id="levelValue" class="text-amber-400 font-bold">40.0</span>
+            <input type="number" id="levelNumberInput" min="1" max="55" step="0.5" value="40" class="w-20 bg-slate-700 border border-slate-600 rounded-lg p-1.5 text-center text-amber-400 font-bold focus:ring-2 focus:ring-amber-400 focus:outline-none">
           </div>
           <input type="range" id="levelInput" min="1" max="50" step="0.5" value="40" class="w-full accent-amber-400 cursor-pointer">
           <div class="flex items-center mt-2">
@@ -63,8 +63,9 @@
             <option value="1">Base Mega (1st evolve)</option>
             <option value="2">High Mega (7th evolve)</option>
             <option value="3">Max Mega (30th evolve)</option>
+            <option value="4">Super Max Mega (Level 4)</option>
           </select>
-          <p class="text-xs text-slate-500 mt-1">Mega Level only unlocks Candy XL / XP / rest-timer perks — it does not change CP or stats.</p>
+          <p id="megaLevelNote" class="text-xs text-slate-500 mt-1">Base / High / Max only unlock Candy XL / XP / rest-timer perks — they don't change CP.</p>
         </div>
       </section>
 
@@ -76,7 +77,7 @@
           <div class="bg-slate-900/80 rounded-lg p-6 text-center border border-slate-700/50">
             <span class="text-xs uppercase tracking-wider text-slate-400 block mb-1">Mega Evolution CP</span>
             <span id="activeCp" class="text-5xl font-black text-amber-400">0</span>
-            <p class="text-xs text-slate-500 mt-2">Same at every Mega Level (Base / High / Max) — Mega Level does not affect CP in Pokémon GO, only Candy XL rate, XP bonus, and rest timer.</p>
+            <p class="text-xs text-slate-500 mt-2">CP is identical at Base / High / Max Mega. Only a Super Max Mega (Level 4), on the handful of Pokémon that have it, changes CP.</p>
           </div>
         </div>
 
@@ -140,8 +141,8 @@
       { name: "Mega Chesnaught", baseAtk: 242, baseDef: 282, baseSta: 204 },
       { name: "Mega Delphox", baseAtk: 331, baseDef: 235, baseSta: 181 },
       { name: "Mega Diancie", baseAtk: 342, baseDef: 235, baseSta: 137 },
-      { name: "Mega Dragonite", baseAtk: 299, baseDef: 255, baseSta: 209 },
-      { name: "Mega Falinks", baseAtk: 267, baseDef: 229, baseSta: 163 },
+      { name: "Mega Dragonite", baseAtk: 299, baseDef: 255, baseSta: 209, superMax: true },
+      { name: "Mega Falinks", baseAtk: 267, baseDef: 229, baseSta: 163, superMax: true },
       { name: "Mega Gallade", baseAtk: 326, baseDef: 230, baseSta: 169 },
       { name: "Mega Garchomp", baseAtk: 339, baseDef: 222, baseSta: 239 },
       { name: "Mega Gardevoir", baseAtk: 326, baseDef: 229, baseSta: 169 },
@@ -156,17 +157,17 @@
       { name: "Mega Latios", baseAtk: 335, baseDef: 241, baseSta: 190 },
       { name: "Mega Lopunny", baseAtk: 282, baseDef: 214, baseSta: 163 },
       { name: "Mega Lucario", baseAtk: 310, baseDef: 175, baseSta: 172 },
-      { name: "Mega Malamar", baseAtk: 208, baseDef: 222, baseSta: 200 },
+      { name: "Mega Malamar", baseAtk: 208, baseDef: 222, baseSta: 200, superMax: true },
       { name: "Mega Manectric", baseAtk: 286, baseDef: 179, baseSta: 172 },
       { name: "Mega Mawile", baseAtk: 188, baseDef: 217, baseSta: 137 },
       { name: "Mega Medicham", baseAtk: 205, baseDef: 179, baseSta: 155 },
       { name: "Mega Metagross", baseAtk: 300, baseDef: 289, baseSta: 190 },
-      { name: "Mega Mewtwo X", baseAtk: 399, baseDef: 215, baseSta: 228 },
-      { name: "Mega Mewtwo Y", baseAtk: 413, baseDef: 223, baseSta: 228 },
+      { name: "Mega Mewtwo X", baseAtk: 399, baseDef: 215, baseSta: 228, superMax: true },
+      { name: "Mega Mewtwo Y", baseAtk: 413, baseDef: 223, baseSta: 228, superMax: true },
       { name: "Mega Pidgeot", baseAtk: 280, baseDef: 175, baseSta: 195 },
       { name: "Mega Pinsir", baseAtk: 305, baseDef: 231, baseSta: 163 },
-      { name: "Mega Raichu X", baseAtk: 277, baseDef: 203, baseSta: 155 },
-      { name: "Mega Raichu Y", baseAtk: 339, baseDef: 157, baseSta: 155 },
+      { name: "Mega Raichu X", baseAtk: 277, baseDef: 203, baseSta: 155, superMax: true },
+      { name: "Mega Raichu Y", baseAtk: 339, baseDef: 157, baseSta: 155, superMax: true },
       { name: "Mega Rayquaza", baseAtk: 377, baseDef: 210, baseSta: 227 },
       { name: "Mega Sableye", baseAtk: 151, baseDef: 216, baseSta: 137 },
       { name: "Mega Salamence", baseAtk: 310, baseDef: 251, baseSta: 216 },
@@ -180,19 +181,28 @@
       { name: "Mega Swampert", baseAtk: 283, baseDef: 218, baseSta: 225 },
       { name: "Mega Tyranitar", baseAtk: 309, baseDef: 276, baseSta: 225 },
       { name: "Mega Venusaur", baseAtk: 241, baseDef: 246, baseSta: 190 },
-      { name: "Mega Victreebel", baseAtk: 265, baseDef: 181, baseSta: 190 },
+      { name: "Mega Victreebel", baseAtk: 265, baseDef: 181, baseSta: 190, superMax: true },
       { name: "Primal Groudon", baseAtk: 353, baseDef: 268, baseSta: 218 },
       { name: "Primal Kyogre", baseAtk: 353, baseDef: 268, baseSta: 218 }
     ].sort((a, b) => a.name.localeCompare(b.name));
 
     const pokemonSelect = document.getElementById('pokemonSelect');
     const levelInput = document.getElementById('levelInput');
-    const levelValue = document.getElementById('levelValue');
+    const levelNumberInput = document.getElementById('levelNumberInput');
     const bestBuddyInput = document.getElementById('bestBuddyInput');
     const atkIv = document.getElementById('atkIv');
     const defIv = document.getElementById('defIv');
     const staIv = document.getElementById('staIv');
     const megaLevelSelect = document.getElementById('megaLevelSelect');
+    const megaLevelNote = document.getElementById('megaLevelNote');
+
+    // Super Max Mega (Level 4) is currently only available for these species.
+    // It adds +2 effective Pokémon levels on top of the normal level (and Best
+    // Buddy's own +1), so a level-50 Best Buddy Pokémon tops out at level 53
+    // while Super Max Mega is active. Every other Pokémon caps at Max Mega
+    // (Level 3), which — like Base and High — only unlocks Candy XL / XP /
+    // rest-timer perks and never changes CP.
+    const SUPER_MAX_LEVEL_BOOST = 2;
 
     function populateDropdown() {
       pokemonSelect.innerHTML = '';
@@ -227,22 +237,50 @@
       };
     }
 
+    // Keep the slider and the number box in sync with each other.
+    function syncLevel(source) {
+      let val = parseFloat(source.value);
+      if (isNaN(val)) return;
+      // snap to the nearest 0.5, same resolution the game uses
+      val = Math.round(val * 2) / 2;
+      levelInput.value = val;
+      levelNumberInput.value = val;
+    }
+
+    // Show/enable the "Super Max Mega (Level 4)" option only for Pokémon that
+    // actually have it, and fall back to Max Mega if a Pokémon without it was
+    // left selected on Level 4.
+    function refreshMegaLevelOptions() {
+      const p = POKEMON_DATA[pokemonSelect.value];
+      const level4Option = megaLevelSelect.querySelector('option[value="4"]');
+      if (p && p.superMax) {
+        level4Option.disabled = false;
+        level4Option.textContent = 'Super Max Mega (Level 4, +2 Levels)';
+        megaLevelNote.textContent = 'Base / High / Max only unlock perks (no CP change). Super Max Mega adds +2 effective levels for this Pokémon.';
+      } else {
+        if (megaLevelSelect.value === '4') megaLevelSelect.value = '3';
+        level4Option.disabled = true;
+        level4Option.textContent = 'Super Max Mega (not available for this Pokémon)';
+        megaLevelNote.textContent = 'Base / High / Max only unlock Candy XL / XP / rest-timer perks — they don\'t change CP. This Pokémon doesn\'t have a Super Max tier.';
+      }
+    }
+
     function calculate() {
       if (!POKEMON_DATA.length) return;
+
+      refreshMegaLevelOptions();
 
       const p = POKEMON_DATA[pokemonSelect.value];
       let level = parseFloat(levelInput.value);
       if (bestBuddyInput.checked) level += 1;
-      
-      levelValue.textContent = level.toFixed(1);
+
+      const isSuperMax = p.superMax && megaLevelSelect.value === '4';
+      if (isSuperMax) level += SUPER_MAX_LEVEL_BOOST;
 
       const ivA = parseInt(atkIv.value) || 0;
       const ivD = parseInt(defIv.value) || 0;
       const ivS = parseInt(staIv.value) || 0;
 
-      // Mega Level (Base/High/Max) never changes CP or stats in Pokémon GO — it only
-      // unlocks Candy XL drop rate, catch XP bonus, and a reduced rest timer.
-      // So the CP is computed once, from level + IVs only.
       const result = calculateCp(p.baseAtk, p.baseDef, p.baseSta, ivA, ivD, ivS, level);
 
       document.getElementById('activeCp').textContent = result.cp;
@@ -251,8 +289,11 @@
       document.getElementById('statSta').textContent = result.effSta;
     }
 
-    [pokemonSelect, levelInput, bestBuddyInput, atkIv, defIv, staIv, megaLevelSelect].forEach(el => {
+    levelInput.addEventListener('input', () => { syncLevel(levelInput); calculate(); });
+    levelNumberInput.addEventListener('input', () => { syncLevel(levelNumberInput); calculate(); });
+    [pokemonSelect, bestBuddyInput, atkIv, defIv, staIv, megaLevelSelect].forEach(el => {
       el.addEventListener('input', calculate);
+      el.addEventListener('change', calculate);
     });
 
     populateDropdown();
