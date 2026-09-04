@@ -20,9 +20,7 @@
         
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1">Select Pokémon</label>
-          <select id="pokemonSelect" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-400 focus:outline-none">
-            <option value="">Loading dataset...</option>
-          </select>
+          <select id="pokemonSelect" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-400 focus:outline-none"></select>
         </div>
 
         <div>
@@ -65,7 +63,7 @@
             <option value="1">Level 1: Base Mega</option>
             <option value="2">Level 2: High Mega</option>
             <option value="3">Level 3: Max Mega</option>
-            <option value="4">Level 4: Super Max (+5 Level CPM Boost)</option>
+            <option value="4">Level 4: Super Max (+5 Level Boost)</option>
           </select>
         </div>
       </section>
@@ -80,7 +78,6 @@
             <span id="activeCp" class="text-5xl font-black text-amber-400">0</span>
           </div>
 
-          <!-- Comparison Table -->
           <div class="mt-6">
             <h3 class="text-sm font-semibold text-slate-300 mb-2">Mega Level Breakdown</h3>
             <div class="overflow-x-auto">
@@ -98,7 +95,6 @@
           </div>
         </div>
 
-        <!-- Calculated Stats -->
         <div class="bg-slate-900/40 p-4 rounded-lg border border-slate-700/40 grid grid-cols-3 text-center text-xs">
           <div>
             <div class="text-slate-400">Effective ATK</div>
@@ -118,7 +114,7 @@
   </div>
 
   <script>
-    // Standard Game Master CP Multipliers (CPM)
+    // Exact Game Master CP Multipliers (CPM)
     const CPM = {
       1: 0.094, 2: 0.16639787, 3: 0.21573247, 4: 0.25572005, 5: 0.29024988,
       6: 0.3210877, 7: 0.34921268, 8: 0.3752355, 9: 0.39956536, 10: 0.42250001,
@@ -130,7 +126,7 @@
       36: 0.76739717, 37: 0.7731865, 38: 0.778933, 39: 0.78463697, 40: 0.7903001,
       41: 0.79530001, 42: 0.8003, 43: 0.8053, 44: 0.81029999, 45: 0.81529999,
       46: 0.82029999, 47: 0.82529999, 48: 0.83029999, 49: 0.83529999, 50: 0.84029999,
-      51: 0.84529999, 52: 0.85029999, 53: 0.85529999, 54: 0.86029999, 55: 0.86529999, 56: 0.87029999
+      51: 0.84529999, 52: 0.85029999, 53: 0.85529999, 54: 0.86029999, 55: 0.86529999
     };
 
     function getCPM(level) {
@@ -140,7 +136,53 @@
       return Math.sqrt((Math.pow(CPM[lower], 2) + Math.pow(CPM[upper], 2)) / 2);
     }
 
-    let POKEMON_DATA = [];
+    // Direct Embedded Dataset (No Fetch Dependencies)
+    const POKEMON_DATA = [
+      { name: "Mega Abomasnow", baseAtk: 240, baseDef: 191, baseSta: 207 },
+      { name: "Mega Absol", baseAtk: 314, baseDef: 130, baseSta: 163 },
+      { name: "Mega Aerodactyl", baseAtk: 292, baseDef: 210, baseSta: 190 },
+      { name: "Mega Aggron", baseAtk: 247, baseDef: 331, baseSta: 172 },
+      { name: "Mega Alakazam", baseAtk: 367, baseDef: 207, baseSta: 146 },
+      { name: "Mega Altaria", baseAtk: 222, baseDef: 218, baseSta: 181 },
+      { name: "Mega Ampharos", baseAtk: 294, baseDef: 203, baseSta: 207 },
+      { name: "Mega Audino", baseAtk: 147, baseDef: 239, baseSta: 230 },
+      { name: "Mega Banette", baseAtk: 312, baseDef: 160, baseSta: 162 },
+      { name: "Mega Beedrill", baseAtk: 303, baseDef: 148, baseSta: 163 },
+      { name: "Mega Blastoise", baseAtk: 264, baseDef: 237, baseSta: 188 },
+      { name: "Mega Blaziken", baseAtk: 329, baseDef: 168, baseSta: 190 },
+      { name: "Mega Camerupt", baseAtk: 253, baseDef: 183, baseSta: 172 },
+      { name: "Mega Charizard X", baseAtk: 273, baseDef: 213, baseSta: 186 },
+      { name: "Mega Charizard Y", baseAtk: 319, baseDef: 212, baseSta: 186 },
+      { name: "Mega Diancie", baseAtk: 342, baseDef: 235, baseSta: 137 },
+      { name: "Mega Gengar", baseAtk: 349, baseDef: 199, baseSta: 155 },
+      { name: "Mega Gardevoir", baseAtk: 326, baseDef: 229, baseSta: 169 },
+      { name: "Mega Gyarados", baseAtk: 292, baseDef: 247, baseSta: 216 },
+      { name: "Mega Heracross", baseAtk: 334, baseDef: 223, baseSta: 190 },
+      { name: "Mega Houndoom", baseAtk: 289, baseDef: 194, baseSta: 181 },
+      { name: "Mega Kangaskhan", baseAtk: 246, baseDef: 210, baseSta: 233 },
+      { name: "Mega Latias", baseAtk: 289, baseDef: 297, baseSta: 190 },
+      { name: "Mega Latios", baseAtk: 335, baseDef: 241, baseSta: 190 },
+      { name: "Mega Lopunny", baseAtk: 282, baseDef: 214, baseSta: 163 },
+      { name: "Mega Lucario", baseAtk: 310, baseDef: 175, baseSta: 172 },
+      { name: "Mega Manectric", baseAtk: 286, baseDef: 179, baseSta: 172 },
+      { name: "Mega Mawile", baseAtk: 188, baseDef: 217, baseSta: 137 },
+      { name: "Mega Medicham", baseAtk: 205, baseDef: 179, baseSta: 155 },
+      { name: "Mega Metagross", baseAtk: 300, baseDef: 289, baseSta: 190 },
+      { name: "Mega Pidgeot", baseAtk: 280, baseDef: 175, baseSta: 195 },
+      { name: "Mega Pinsir", baseAtk: 305, baseDef: 231, baseSta: 163 },
+      { name: "Mega Rayquaza", baseAtk: 377, baseDef: 210, baseSta: 210 },
+      { name: "Mega Salamence", baseAtk: 310, baseDef: 251, baseSta: 216 },
+      { name: "Mega Sceptile", baseAtk: 320, baseDef: 186, baseSta: 172 },
+      { name: "Mega Scizor", baseAtk: 279, baseDef: 250, baseSta: 172 },
+      { name: "Mega Sharpedo", baseAtk: 289, baseDef: 144, baseSta: 172 },
+      { name: "Mega Slowbro", baseAtk: 224, baseDef: 306, baseSta: 216 },
+      { name: "Mega Steelix", baseAtk: 214, baseDef: 327, baseSta: 181 },
+      { name: "Mega Swampert", baseAtk: 283, baseDef: 218, baseSta: 225 },
+      { name: "Mega Tyranitar", baseAtk: 309, baseDef: 276, baseSta: 225 },
+      { name: "Mega Venusaur", baseAtk: 241, baseDef: 246, baseSta: 207 },
+      { name: "Raichu X (Mega)", baseAtk: 288, baseDef: 182, baseSta: 155 },
+      { name: "Raichu Y (Mega)", baseAtk: 338, baseDef: 157, baseSta: 155 }
+    ].sort((a, b) => a.name.localeCompare(b.name));
 
     // DOM Elements
     const pokemonSelect = document.getElementById('pokemonSelect');
@@ -152,37 +194,14 @@
     const staIv = document.getElementById('staIv');
     const megaLevelSelect = document.getElementById('megaLevelSelect');
 
-    // Fetch live Game Master stats from PvPoke repository
-    async function loadDataset() {
-      try {
-        const response = await fetch('https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/pokemon.json');
-        const rawData = await response.json();
-        
-        // Filter and map only Mega Pokémon entries
-        POKEMON_DATA = rawData
-          .filter(p => p.speciesId && p.speciesId.includes('_mega'))
-          .map(p => ({
-            name: p.speciesName,
-            baseAtk: p.baseStats.atk,
-            baseDef: p.baseStats.def,
-            baseSta: p.baseStats.hp
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
-
-        // Populate dropdown menu
-        pokemonSelect.innerHTML = '';
-        POKEMON_DATA.forEach((p, index) => {
-          const option = document.createElement('option');
-          option.value = index;
-          option.textContent = p.name;
-          pokemonSelect.appendChild(option);
-        });
-
-        calculate();
-      } catch (err) {
-        pokemonSelect.innerHTML = '<option value="">Error loading stats dataset</option>';
-        console.error('Failed to load Pokémon dataset:', err);
-      }
+    function populateDropdown() {
+      pokemonSelect.innerHTML = '';
+      POKEMON_DATA.forEach((p, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = p.name;
+        pokemonSelect.appendChild(option);
+      });
     }
 
     function setIVs(a, d, s) {
@@ -260,7 +279,8 @@
       el.addEventListener('input', calculate);
     });
 
-    loadDataset();
+    populateDropdown();
+    calculate();
   </script>
 </body>
 </html>
