@@ -115,27 +115,24 @@
 
   <script>
     const CPM = {
-      1: 0.094, 2: 0.16639787, 3: 0.21573247, 4: 0.25572005, 5: 0.29024988,
-      6: 0.3210877, 7: 0.34921268, 8: 0.3752355, 9: 0.39956536, 10: 0.42250001,
-      11: 0.44310755, 12: 0.46241348, 13: 0.48068684, 14: 0.49808622, 15: 0.51739395,
-      16: 0.5354115, 17: 0.5528091, 18: 0.56958826, 19: 0.5857643, 20: 0.61,
-      21: 0.6230132, 22: 0.63558606, 23: 0.64774373, 24: 0.6595133, 25: 0.6709117,
-      26: 0.6819645, 27: 0.692688, 28: 0.703084, 29: 0.7131649, 30: 0.7317,
-      31: 0.7377695, 32: 0.74378943, 33: 0.74976104, 34: 0.75568551, 35: 0.76156384,
-      36: 0.76739717, 37: 0.7731865, 38: 0.778933, 39: 0.78463697, 40: 0.7903001,
-      41: 0.79530001, 42: 0.8003, 43: 0.8053, 44: 0.81029999, 45: 0.81529999,
-      46: 0.82029999, 47: 0.82529999, 48: 0.83029999, 49: 0.83529999, 50: 0.84029999,
-      51: 0.84529999, 52: 0.85029999, 53: 0.85529999, 54: 0.86029999, 55: 0.86529999,
-      56: 0.87029999
+      1: 0.094, 1.5: 0.135137432, 2: 0.16639787, 2.5: 0.192686068, 3: 0.21573247, 3.5: 0.236572661, 4: 0.25572005, 4.5: 0.273530381, 5: 0.29024988,
+      5.5: 0.306057377, 6: 0.3210877, 6.5: 0.335445036, 7: 0.34921268, 7.5: 0.362457751, 8: 0.3752355, 8.5: 0.387592406, 9: 0.39956536,
+      9.5: 0.411180811, 10: 0.42250001, 10.5: 0.432926409, 11: 0.44310755, 11.5: 0.453059958, 12: 0.46241348, 12.5: 0.471608874, 13: 0.48068684,
+      13.5: 0.489651259, 14: 0.49808622, 14.5: 0.506510294, 15: 0.51739395, 15.5: 0.52648719, 16: 0.5354115, 16.5: 0.54417032, 17: 0.5528091,
+      17.5: 0.56130691, 18: 0.56958826, 18.5: 0.57774786, 19: 0.5857643, 19.5: 0.593655, 20: 0.61, 20.5: 0.6166256, 21: 0.6230132,
+      21.5: 0.6293687, 22: 0.63558606, 22.5: 0.64171134, 23: 0.64774373, 23.5: 0.65368582, 24: 0.6595133, 24.5: 0.66525718, 25: 0.6709117,
+      25.5: 0.67648119, 26: 0.6819645, 26.5: 0.6873635, 27: 0.692688, 27.5: 0.69793087, 28: 0.703084, 28.5: 0.7081561, 29: 0.7131649,
+      29.5: 0.7181007, 30: 0.7317, 30.5: 0.734741, 31: 0.7377695, 31.5: 0.74078557, 32: 0.74378943, 32.5: 0.7467816, 33: 0.74976104,
+      33.5: 0.75272809, 34: 0.75568551, 34.5: 0.75863088, 35: 0.76156384, 35.5: 0.76448606, 36: 0.76739717, 36.5: 0.77029726, 37: 0.7731865,
+      37.5: 0.77606518, 38: 0.778933, 38.5: 0.7817904, 39: 0.78463697, 39.5: 0.7874736, 40: 0.7903001, 40.5: 0.7928039, 41: 0.79530001,
+      41.5: 0.79780001, 42: 0.8003, 42.5: 0.80279999, 43: 0.8053, 43.5: 0.8078, 44: 0.81029999, 44.5: 0.81279999, 45: 0.81529999,
+      45.5: 0.81779999, 46: 0.82029999, 46.5: 0.82279999, 47: 0.82529999, 47.5: 0.82779999, 48: 0.83029999, 48.5: 0.83279999, 49: 0.83529999,
+      49.5: 0.83779999, 50: 0.84029999, 50.5: 0.84279999, 51: 0.84529999, 51.5: 0.84779999, 52: 0.85029999, 52.5: 0.85279999, 53: 0.85529999,
+      53.5: 0.85779999, 54: 0.86029999, 54.5: 0.86279999, 55: 0.86529999
     };
 
     function getCPM(level) {
       if (CPM[level] !== undefined) return CPM[level];
-      const lower = Math.floor(level);
-      const upper = Math.ceil(level);
-      if (CPM[lower] !== undefined && CPM[upper] !== undefined) {
-        return Math.sqrt((Math.pow(CPM[lower], 2) + Math.pow(CPM[upper], 2)) / 2);
-      }
       return 0.84029999 + (level - 50) * 0.005;
     }
 
@@ -155,14 +152,17 @@
       { name: "Mega Camerupt", baseAtk: 253, baseDef: 183, baseSta: 172 },
       { name: "Mega Charizard X", baseAtk: 273, baseDef: 213, baseSta: 186 },
       { name: "Mega Charizard Y", baseAtk: 319, baseDef: 212, baseSta: 186 },
-      { name: "Mega Chesnaught", baseAtk: 246, baseDef: 233, baseSta: 185 }, // 9% Nerfed (>4k CP un-nerfed)
-      { name: "Mega Delphox", baseAtk: 289, baseDef: 204, baseSta: 164 }, // 9% Nerfed (>4k CP un-nerfed)
+      { name: "Mega Chesnaught", baseAtk: 271, baseDef: 256, baseSta: 204 },
+      { name: "Mega Delphox", baseAtk: 318, baseDef: 224, baseSta: 181 },
       { name: "Mega Diancie", baseAtk: 342, baseDef: 235, baseSta: 137 },
-      { name: "Mega Dragonite", baseAtk: 294, baseDef: 212, baseSta: 190 }, // 9% Nerfed (>4k CP un-nerfed)
+      { name: "Mega Dragonite", baseAtk: 323, baseDef: 233, baseSta: 209 },
       { name: "Mega Falinks", baseAtk: 258, baseDef: 217, baseSta: 163 },
+      { name: "Mega Gallade", baseAtk: 326, baseDef: 212, baseSta: 169 },
+      { name: "Mega Garchomp", baseAtk: 339, baseDef: 222, baseSta: 239 },
       { name: "Mega Gardevoir", baseAtk: 326, baseDef: 229, baseSta: 169 },
       { name: "Mega Gengar", baseAtk: 349, baseDef: 199, baseSta: 155 },
-      { name: "Mega Greninja", baseAtk: 293, baseDef: 167, baseSta: 159 }, // 9% Nerfed (>4k CP un-nerfed)
+      { name: "Mega Glalie", baseAtk: 252, baseDef: 168, baseSta: 190 },
+      { name: "Mega Greninja", baseAtk: 322, baseDef: 184, baseSta: 175 },
       { name: "Mega Gyarados", baseAtk: 292, baseDef: 247, baseSta: 216 },
       { name: "Mega Heracross", baseAtk: 334, baseDef: 223, baseSta: 190 },
       { name: "Mega Houndoom", baseAtk: 289, baseDef: 194, baseSta: 181 },
@@ -171,17 +171,19 @@
       { name: "Mega Latios", baseAtk: 335, baseDef: 241, baseSta: 190 },
       { name: "Mega Lopunny", baseAtk: 282, baseDef: 214, baseSta: 163 },
       { name: "Mega Lucario", baseAtk: 310, baseDef: 175, baseSta: 172 },
+      { name: "Mega Malamar", baseAtk: 222, baseDef: 186, baseSta: 200 },
       { name: "Mega Manectric", baseAtk: 286, baseDef: 179, baseSta: 172 },
       { name: "Mega Mawile", baseAtk: 188, baseDef: 217, baseSta: 137 },
       { name: "Mega Medicham", baseAtk: 205, baseDef: 179, baseSta: 155 },
-      { name: "Mega Metagross", baseAtk: 273, baseDef: 263, baseSta: 172 }, // 9% Nerfed (>4k CP un-nerfed)
-      { name: "Mega Mewtwo X", baseAtk: 375, baseDef: 212, baseSta: 214 }, // 9% Nerfed from base Mewtwo
-      { name: "Mega Mewtwo Y", baseAtk: 388, baseDef: 202, baseSta: 214 }, // 9% Nerfed from base Mewtwo
+      { name: "Mega Metagross", baseAtk: 300, baseDef: 289, baseSta: 190 },
+      { name: "Mega Mewtwo X", baseAtk: 378, baseDef: 212, baseSta: 214 },
+      { name: "Mega Mewtwo Y", baseAtk: 388, baseDef: 202, baseSta: 214 },
       { name: "Mega Pidgeot", baseAtk: 280, baseDef: 175, baseSta: 195 },
       { name: "Mega Pinsir", baseAtk: 305, baseDef: 231, baseSta: 163 },
       { name: "Mega Raichu X", baseAtk: 277, baseDef: 203, baseSta: 155 },
-      { name: "Mega Raichu Y", baseAtk: 308, baseDef: 143, baseSta: 141 }, // 9% Nerfed (>4k CP un-nerfed)
-      { name: "Mega Rayquaza", baseAtk: 377, baseDef: 210, baseSta: 210 }, // 3% Nerfed
+      { name: "Mega Raichu Y", baseAtk: 339, baseDef: 157, baseSta: 155 },
+      { name: "Mega Rayquaza", baseAtk: 377, baseDef: 210, baseSta: 210 },
+      { name: "Mega Sableye", baseAtk: 141, baseDef: 236, baseSta: 137 },
       { name: "Mega Salamence", baseAtk: 310, baseDef: 251, baseSta: 216 },
       { name: "Mega Sceptile", baseAtk: 320, baseDef: 186, baseSta: 172 },
       { name: "Mega Scizor", baseAtk: 279, baseDef: 250, baseSta: 172 },
@@ -193,9 +195,9 @@
       { name: "Mega Swampert", baseAtk: 283, baseDef: 218, baseSta: 225 },
       { name: "Mega Tyranitar", baseAtk: 309, baseDef: 276, baseSta: 225 },
       { name: "Mega Venusaur", baseAtk: 241, baseDef: 246, baseSta: 207 },
-      { name: "Mega Victreebel", baseAtk: 257, baseDef: 148, baseSta: 172 }, // 9% Nerfed (>4k CP un-nerfed)
-      { name: "Primal Groudon", baseAtk: 353, baseDef: 268, baseSta: 218 }, // 3% Nerfed
-      { name: "Primal Kyogre", baseAtk: 353, baseDef: 268, baseSta: 218 }   // 3% Nerfed
+      { name: "Mega Victreebel", baseAtk: 283, baseDef: 163, baseSta: 190 },
+      { name: "Primal Groudon", baseAtk: 353, baseDef: 268, baseSta: 218 },
+      { name: "Primal Kyogre", baseAtk: 353, baseDef: 268, baseSta: 218 }
     ].sort((a, b) => a.name.localeCompare(b.name));
 
     const pokemonSelect = document.getElementById('pokemonSelect');
