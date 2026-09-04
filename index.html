@@ -29,9 +29,12 @@
             <input type="number" id="levelNumberInput" min="1" max="55" step="0.5" value="40" class="w-20 bg-slate-700 border border-slate-600 rounded-lg p-1.5 text-center text-amber-400 font-bold focus:ring-2 focus:ring-amber-400 focus:outline-none">
           </div>
           <input type="range" id="levelInput" min="1" max="50" step="0.5" value="40" class="w-full accent-amber-400 cursor-pointer">
-          <div class="flex items-center mt-2">
-            <input type="checkbox" id="bestBuddyInput" class="w-4 h-4 accent-amber-400 rounded cursor-pointer">
-            <label for="bestBuddyInput" class="ml-2 text-sm text-slate-300 cursor-pointer">Best Buddy (+1 Level)</label>
+          <div class="flex items-center justify-between mt-2">
+            <label id="bestBuddyLabel" class="flex items-center transition-opacity">
+              <input type="checkbox" id="bestBuddyInput" class="w-4 h-4 accent-amber-400 rounded cursor-pointer">
+              <span class="ml-2 text-sm text-slate-300 cursor-pointer">Best Buddy (+1 Level)</span>
+            </label>
+            <button id="maxLevelBtn" type="button" class="text-xs bg-slate-700 hover:bg-slate-600 text-amber-300 font-semibold py-1 px-2.5 rounded">Max Level (50)</button>
           </div>
         </div>
 
@@ -127,7 +130,7 @@
       { name: "Mega Absol", baseAtk: 314, baseDef: 130, baseSta: 163 },
       { name: "Mega Aerodactyl", baseAtk: 292, baseDef: 210, baseSta: 190 },
       { name: "Mega Aggron", baseAtk: 247, baseDef: 331, baseSta: 172 },
-      { name: "Mega Alakazam", baseAtk: 367, baseDef: 207, baseSta: 146 },
+      { name: "Mega Alakazam", baseAtk: 367, baseDef: 206, baseSta: 146 },
       { name: "Mega Altaria", baseAtk: 222, baseDef: 218, baseSta: 181 },
       { name: "Mega Ampharos", baseAtk: 294, baseDef: 203, baseSta: 207 },
       { name: "Mega Audino", baseAtk: 147, baseDef: 239, baseSta: 230 },
@@ -146,10 +149,10 @@
       { name: "Mega Gallade", baseAtk: 326, baseDef: 230, baseSta: 169 },
       { name: "Mega Garchomp", baseAtk: 339, baseDef: 222, baseSta: 239 },
       { name: "Mega Gardevoir", baseAtk: 326, baseDef: 229, baseSta: 169 },
-      { name: "Mega Gengar", baseAtk: 349, baseDef: 199, baseSta: 155 },
+      { name: "Mega Gengar", baseAtk: 349, baseDef: 199, baseSta: 155, superMax: true },
       { name: "Mega Glalie", baseAtk: 252, baseDef: 168, baseSta: 190 },
       { name: "Mega Greninja", baseAtk: 299, baseDef: 180, baseSta: 176 },
-      { name: "Mega Gyarados", baseAtk: 292, baseDef: 247, baseSta: 216 },
+      { name: "Mega Gyarados", baseAtk: 292, baseDef: 247, baseSta: 216, superMax: true },
       { name: "Mega Heracross", baseAtk: 334, baseDef: 223, baseSta: 190 },
       { name: "Mega Houndoom", baseAtk: 289, baseDef: 194, baseSta: 181 },
       { name: "Mega Kangaskhan", baseAtk: 246, baseDef: 210, baseSta: 233 },
@@ -164,7 +167,7 @@
       { name: "Mega Metagross", baseAtk: 300, baseDef: 289, baseSta: 190 },
       { name: "Mega Mewtwo X", baseAtk: 399, baseDef: 215, baseSta: 228, superMax: true },
       { name: "Mega Mewtwo Y", baseAtk: 413, baseDef: 223, baseSta: 228, superMax: true },
-      { name: "Mega Pidgeot", baseAtk: 280, baseDef: 175, baseSta: 195 },
+      { name: "Mega Pidgeot", baseAtk: 280, baseDef: 175, baseSta: 195, superMax: true },
       { name: "Mega Pinsir", baseAtk: 305, baseDef: 231, baseSta: 163 },
       { name: "Mega Raichu X", baseAtk: 277, baseDef: 203, baseSta: 155, superMax: true },
       { name: "Mega Raichu Y", baseAtk: 339, baseDef: 157, baseSta: 155, superMax: true },
@@ -196,13 +199,18 @@
     const megaLevelSelect = document.getElementById('megaLevelSelect');
     const megaLevelNote = document.getElementById('megaLevelNote');
 
-    // Super Max Mega (Level 4) is currently only available for these species.
-    // It adds +2 effective Pokémon levels on top of the normal level (and Best
-    // Buddy's own +1), so a level-50 Best Buddy Pokémon tops out at level 53
-    // while Super Max Mega is active. Every other Pokémon caps at Max Mega
-    // (Level 3), which — like Base and High — only unlocks Candy XL / XP /
-    // rest-timer perks and never changes CP.
-    const SUPER_MAX_LEVEL_BOOST = 2;
+    // Super Max Mega (Level 4, fully maxed — the gold-ringed 4th pip in the
+    // in-game "Meganivel" screen) is currently only available for these
+    // species. Confirmed against two independent in-game screenshots (Mega
+    // Mewtwo Y and Mega Dragonite, both level-50 power-up, both fully-maxed
+    // Super Max): it sets the effective level to (power-up level + 5), and
+    // this REPLACES Best Buddy's own +1 rather than stacking with it —
+    // toggling Best Buddy on an already-Super-Max Pokémon made no CP
+    // difference in testing. Every other Mega Level (Base/High/Max) still
+    // only unlocks Candy XL / XP / rest-timer perks and never changes CP.
+    // Note: a Super Max Pokémon that hasn't fully filled its 4th pip yet may
+    // show a smaller boost than +5 — this models the fully-maxed state.
+    const SUPER_MAX_LEVEL_BOOST = 5;
 
     function populateDropdown() {
       pokemonSelect.innerHTML = '';
@@ -249,20 +257,28 @@
 
     // Show/enable the "Super Max Mega (Level 4)" option only for Pokémon that
     // actually have it, and fall back to Max Mega if a Pokémon without it was
-    // left selected on Level 4.
+    // left selected on Level 4. Also grey out Best Buddy while Super Max is
+    // active, since Super Max overrides it rather than stacking with it.
     function refreshMegaLevelOptions() {
       const p = POKEMON_DATA[pokemonSelect.value];
       const level4Option = megaLevelSelect.querySelector('option[value="4"]');
+      const bestBuddyLabel = document.getElementById('bestBuddyLabel');
+      const isSuperMaxActive = p && p.superMax && megaLevelSelect.value === '4';
+
       if (p && p.superMax) {
         level4Option.disabled = false;
-        level4Option.textContent = 'Super Max Mega (Level 4, +2 Levels)';
-        megaLevelNote.textContent = 'Base / High / Max only unlock perks (no CP change). Super Max Mega adds +2 effective levels for this Pokémon.';
+        level4Option.textContent = 'Super Max Mega (Level 4, +5 Levels)';
+        megaLevelNote.textContent = 'Base / High / Max only unlock perks (no CP change). Fully-maxed Super Max sets the level to power-up level +5, overriding Best Buddy rather than stacking with it.';
       } else {
         if (megaLevelSelect.value === '4') megaLevelSelect.value = '3';
         level4Option.disabled = true;
         level4Option.textContent = 'Super Max Mega (not available for this Pokémon)';
         megaLevelNote.textContent = 'Base / High / Max only unlock Candy XL / XP / rest-timer perks — they don\'t change CP. This Pokémon doesn\'t have a Super Max tier.';
       }
+
+      bestBuddyInput.disabled = isSuperMaxActive;
+      bestBuddyLabel.classList.toggle('opacity-40', isSuperMaxActive);
+      bestBuddyLabel.title = isSuperMaxActive ? 'Super Max Mega already includes a bigger boost than Best Buddy — it overrides it rather than stacking.' : '';
     }
 
     function calculate() {
@@ -272,16 +288,21 @@
 
       const p = POKEMON_DATA[pokemonSelect.value];
       let level = parseFloat(levelInput.value);
-      if (bestBuddyInput.checked) level += 1;
 
       const isSuperMax = p.superMax && megaLevelSelect.value === '4';
-      if (isSuperMax) level += SUPER_MAX_LEVEL_BOOST;
+      if (isSuperMax) {
+        // Super Max overrides Best Buddy's +1 rather than stacking with it.
+        level += SUPER_MAX_LEVEL_BOOST;
+      } else if (bestBuddyInput.checked) {
+        level += 1;
+      }
 
       const ivA = parseInt(atkIv.value) || 0;
       const ivD = parseInt(defIv.value) || 0;
       const ivS = parseInt(staIv.value) || 0;
 
       const result = calculateCp(p.baseAtk, p.baseDef, p.baseSta, ivA, ivD, ivS, level);
+
 
       document.getElementById('activeCp').textContent = result.cp;
       document.getElementById('statAtk').textContent = result.effAtk;
@@ -291,6 +312,11 @@
 
     levelInput.addEventListener('input', () => { syncLevel(levelInput); calculate(); });
     levelNumberInput.addEventListener('input', () => { syncLevel(levelNumberInput); calculate(); });
+    document.getElementById('maxLevelBtn').addEventListener('click', () => {
+      levelInput.value = 50;
+      levelNumberInput.value = 50;
+      calculate();
+    });
     [pokemonSelect, bestBuddyInput, atkIv, defIv, staIv, megaLevelSelect].forEach(el => {
       el.addEventListener('input', calculate);
       el.addEventListener('change', calculate);
