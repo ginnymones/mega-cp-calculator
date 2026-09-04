@@ -20,7 +20,9 @@
         
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1">Select Pokémon</label>
-          <select id="pokemonSelect" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-400 focus:outline-none"></select>
+          <select id="pokemonSelect" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-400 focus:outline-none">
+            <option value="">Loading dataset...</option>
+          </select>
         </div>
 
         <div>
@@ -76,7 +78,6 @@
           <div class="bg-slate-900/80 rounded-lg p-6 text-center border border-slate-700/50">
             <span class="text-xs uppercase tracking-wider text-slate-400 block mb-1">Active Mega CP</span>
             <span id="activeCp" class="text-5xl font-black text-amber-400">0</span>
-            <div id="nerfBadge" class="hidden mt-2 inline-block bg-red-900/50 text-red-300 border border-red-700 text-xs px-2 py-0.5 rounded">9% Stat Nerf Applied</div>
           </div>
 
           <!-- Comparison Table -->
@@ -117,7 +118,7 @@
   </div>
 
   <script>
-    // Standard Game Master CP Multipliers (CPM) up to Level 56
+    // Standard Game Master CP Multipliers (CPM)
     const CPM = {
       1: 0.094, 2: 0.16639787, 3: 0.21573247, 4: 0.25572005, 5: 0.29024988,
       6: 0.3210877, 7: 0.34921268, 8: 0.3752355, 9: 0.39956536, 10: 0.42250001,
@@ -139,66 +140,7 @@
       return Math.sqrt((Math.pow(CPM[lower], 2) + Math.pow(CPM[upper], 2)) / 2);
     }
 
-    // Comprehensive Mega Pokémon Base Data
-    const POKEMON_DATA = [
-      { name: "Venusaur (Mega)", baseAtk: 241, baseDef: 246, baseSta: 190 },
-      { name: "Charizard (Mega X)", baseAtk: 273, baseDef: 213, baseSta: 186 },
-      { name: "Charizard (Mega Y)", baseAtk: 319, baseDef: 212, baseSta: 186 },
-      { name: "Blastoise (Mega)", baseAtk: 264, baseDef: 237, baseSta: 188 },
-      { name: "Beedrill (Mega)", baseAtk: 303, baseDef: 148, baseSta: 163 },
-      { name: "Pidgeot (Mega)", baseAtk: 280, baseDef: 175, baseSta: 195 },
-      { name: "Raichu X (Mega)", baseAtk: 312, baseDef: 182, baseSta: 155 },
-      { name: "Raichu Y (Mega)", baseAtk: 339, baseDef: 157, baseSta: 155 },
-      { name: "Alakazam (Mega)", baseAtk: 367, baseDef: 207, baseSta: 146 },
-      { name: "Victreebel (Mega)", baseAtk: 272, baseDef: 181, baseSta: 190 },
-      { name: "Gengar (Mega)", baseAtk: 349, baseDef: 199, baseSta: 155 },
-      { name: "Kangaskhan (Mega)", baseAtk: 246, baseDef: 210, baseSta: 233 },
-      { name: "Starmie (Mega)", baseAtk: 276, baseDef: 229, baseSta: 155 },
-      { name: "Gyarados (Mega)", baseAtk: 292, baseDef: 247, baseSta: 216 },
-      { name: "Aerodactyl (Mega)", baseAtk: 292, baseDef: 210, baseSta: 190 },
-      { name: "Dragonite (Mega)", baseAtk: 329, baseDef: 281, baseSta: 230 },
-      { name: "Mewtwo (Mega X)", baseAtk: 375, baseDef: 212, baseSta: 214 },
-      { name: "Mewtwo (Mega Y)", baseAtk: 426, baseDef: 229, baseSta: 235 },
-      { name: "Ampharos (Mega)", baseAtk: 294, baseDef: 203, baseSta: 207 },
-      { name: "Steelix (Mega)", baseAtk: 212, baseDef: 327, baseSta: 181 },
-      { name: "Scizor (Mega)", baseAtk: 279, baseDef: 250, baseSta: 172 },
-      { name: "Heracross (Mega)", baseAtk: 334, baseDef: 223, baseSta: 190 },
-      { name: "Houndoom (Mega)", baseAtk: 289, baseDef: 194, baseSta: 181 },
-      { name: "Tyranitar (Mega)", baseAtk: 309, baseDef: 276, baseSta: 225 },
-      { name: "Sceptile (Mega)", baseAtk: 320, baseDef: 186, baseSta: 172 },
-      { name: "Blaziken (Mega)", baseAtk: 329, baseDef: 168, baseSta: 190 },
-      { name: "Swampert (Mega)", baseAtk: 283, baseDef: 218, baseSta: 225 },
-      { name: "Gardevoir (Mega)", baseAtk: 326, baseDef: 229, baseSta: 169 },
-      { name: "Aggron (Mega)", baseAtk: 247, baseDef: 331, baseSta: 172 },
-      { name: "Medicham (Mega)", baseAtk: 205, baseDef: 179, baseSta: 155 },
-      { name: "Manectric (Mega)", baseAtk: 286, baseDef: 179, baseSta: 172 },
-      { name: "Altaria (Mega)", baseAtk: 222, baseDef: 218, baseSta: 181 },
-      { name: "Banette (Mega)", baseAtk: 312, baseDef: 160, baseSta: 162 },
-      { name: "Absol (Mega)", baseAtk: 314, baseDef: 130, baseSta: 163 },
-      { name: "Glalie (Mega)", baseAtk: 252, baseDef: 126, baseSta: 190 },
-      { name: "Salamence (Mega)", baseAtk: 310, baseDef: 251, baseSta: 216 },
-      { name: "Metagross (Mega)", baseAtk: 300, baseDef: 286, baseSta: 190 },
-      { name: "Latias (Mega)", baseAtk: 289, baseDef: 297, baseSta: 190 },
-      { name: "Latios (Mega)", baseAtk: 335, baseDef: 241, baseSta: 190 },
-      { name: "Rayquaza (Mega)", baseAtk: 377, baseDef: 210, baseSta: 227 },
-      { name: "Lopunny (Mega)", baseAtk: 282, baseDef: 214, baseSta: 163 },
-      { name: "Garchomp (Mega)", baseAtk: 339, baseDef: 222, baseSta: 239 },
-      { name: "Lucario (Mega)", baseAtk: 310, baseDef: 175, baseSta: 172 },
-      { name: "Abomasnow (Mega)", baseAtk: 240, baseDef: 191, baseSta: 207 },
-      { name: "Staraptor (Mega)", baseAtk: 284, baseDef: 178, baseSta: 198 },
-      { name: "Gallade (Mega)", baseAtk: 326, baseDef: 212, baseSta: 169 },
-      { name: "Audino (Mega)", baseAtk: 147, baseDef: 239, baseSta: 230 },
-      { name: "Malamar (Mega)", baseAtk: 208, baseDef: 195, baseSta: 200 },
-      { name: "Falinks (Mega)", baseAtk: 267, baseDef: 229, baseSta: 163 },
-      { name: "Skarmory (Mega)", baseAtk: 273, baseDef: 228, baseSta: 163 },
-      { name: "Chesnaught (Mega)", baseAtk: 271, baseDef: 251, baseSta: 204 },
-      { name: "Delphox (Mega)", baseAtk: 302, baseDef: 218, baseSta: 181 },
-      { name: "Greninja (Mega)", baseAtk: 315, baseDef: 172, baseSta: 175 },
-      { name: "Diancie (Mega)", baseAtk: 342, baseDef: 235, baseSta: 137 }
-    ];
-
-    // Sort Pokémon alphabetically
-    POKEMON_DATA.sort((a, b) => a.name.localeCompare(b.name));
+    let POKEMON_DATA = [];
 
     // DOM Elements
     const pokemonSelect = document.getElementById('pokemonSelect');
@@ -210,13 +152,38 @@
     const staIv = document.getElementById('staIv');
     const megaLevelSelect = document.getElementById('megaLevelSelect');
 
-    // Populate Selector
-    POKEMON_DATA.forEach((p, index) => {
-      const option = document.createElement('option');
-      option.value = index;
-      option.textContent = p.name;
-      pokemonSelect.appendChild(option);
-    });
+    // Fetch live Game Master stats from PvPoke repository
+    async function loadDataset() {
+      try {
+        const response = await fetch('https://raw.githubusercontent.com/pvpoke/pvpoke/master/src/data/pokemon.json');
+        const rawData = await response.json();
+        
+        // Filter and map only Mega Pokémon entries
+        POKEMON_DATA = rawData
+          .filter(p => p.speciesId && p.speciesId.includes('_mega'))
+          .map(p => ({
+            name: p.speciesName,
+            baseAtk: p.baseStats.atk,
+            baseDef: p.baseStats.def,
+            baseSta: p.baseStats.hp
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        // Populate dropdown menu
+        pokemonSelect.innerHTML = '';
+        POKEMON_DATA.forEach((p, index) => {
+          const option = document.createElement('option');
+          option.value = index;
+          option.textContent = p.name;
+          pokemonSelect.appendChild(option);
+        });
+
+        calculate();
+      } catch (err) {
+        pokemonSelect.innerHTML = '<option value="">Error loading stats dataset</option>';
+        console.error('Failed to load Pokémon dataset:', err);
+      }
+    }
 
     function setIVs(a, d, s) {
       atkIv.value = a;
@@ -227,35 +194,14 @@
 
     function calculateCp(baseAtk, baseDef, baseSta, atkIv, defIv, staIv, level) {
       const cpm = getCPM(level);
-      
-      // Calculate raw unnerfed CP at Level 40 with perfect 15/15/15 IVs
-      const unnerfedAtk = baseAtk + 15;
-      const unnerfedDef = baseDef + 15;
-      const unnerfedSta = baseSta + 15;
-      const rawCp40 = Math.floor((unnerfedAtk * Math.sqrt(unnerfedDef) * Math.sqrt(unnerfedSta) * Math.pow(CPM[40], 2)) / 10);
-      
-      let finalBaseAtk = baseAtk;
-      let finalBaseDef = baseDef;
-      let finalBaseSta = baseSta;
-      let isNerfed = false;
-
-      // Apply Niantic's 9% Stat Nerf if raw CP at Level 40 exceeds 4,000
-      if (rawCp40 > 4000) {
-        finalBaseAtk = Math.floor(baseAtk * 0.91);
-        finalBaseDef = Math.floor(baseDef * 0.91);
-        finalBaseSta = Math.floor(baseSta * 0.91);
-        isNerfed = true;
-      }
-
-      const totalAtk = finalBaseAtk + atkIv;
-      const totalDef = finalBaseDef + defIv;
-      const totalSta = finalBaseSta + staIv;
+      const totalAtk = baseAtk + atkIv;
+      const totalDef = baseDef + defIv;
+      const totalSta = baseSta + staIv;
 
       const cp = Math.max(10, Math.floor((totalAtk * Math.sqrt(totalDef) * Math.sqrt(totalSta) * Math.pow(cpm, 2)) / 10));
       
       return {
         cp,
-        isNerfed,
         effAtk: Math.floor(totalAtk * cpm),
         effDef: Math.floor(totalDef * cpm),
         effSta: Math.floor(totalSta * cpm)
@@ -263,6 +209,8 @@
     }
 
     function calculate() {
+      if (!POKEMON_DATA.length) return;
+
       const p = POKEMON_DATA[pokemonSelect.value];
       let level = parseFloat(levelInput.value);
       if (bestBuddyInput.checked) level += 1;
@@ -274,17 +222,14 @@
       const ivS = parseInt(staIv.value) || 0;
       const selectedMegaLevel = parseInt(megaLevelSelect.value);
 
-      // Calculate for selected Mega Level (+5 Level CPM Boost for Level 4 / Super Max)
       const activeBoost = selectedMegaLevel === 4 ? 5 : 0;
       const activeResult = calculateCp(p.baseAtk, p.baseDef, p.baseSta, ivA, ivD, ivS, level + activeBoost);
 
       document.getElementById('activeCp').textContent = activeResult.cp;
-      document.getElementById('nerfBadge').classList.toggle('hidden', !activeResult.isNerfed);
       document.getElementById('statAtk').textContent = activeResult.effAtk;
       document.getElementById('statDef').textContent = activeResult.effDef;
       document.getElementById('statSta').textContent = activeResult.effSta;
 
-      // Render breakdown table across all 4 Mega Levels
       const tbody = document.getElementById('breakdownTable');
       tbody.innerHTML = '';
 
@@ -311,13 +256,11 @@
       });
     }
 
-    // Event Listeners
     [pokemonSelect, levelInput, bestBuddyInput, atkIv, defIv, staIv, megaLevelSelect].forEach(el => {
       el.addEventListener('input', calculate);
     });
 
-    // Initial Calculation
-    calculate();
+    loadDataset();
   </script>
 </body>
 </html>
