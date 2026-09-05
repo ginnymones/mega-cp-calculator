@@ -159,18 +159,18 @@
       { name: "Mega Camerupt", baseAtk: 253, baseDef: 183, baseSta: 172 },
       { name: "Mega Charizard X", baseAtk: 273, baseDef: 213, baseSta: 186 },
       { name: "Mega Charizard Y", baseAtk: 319, baseDef: 212, baseSta: 186 },
-      { name: "Mega Chesnaught", baseAtk: 242, baseDef: 282, baseSta: 204 },
-      { name: "Mega Delphox", baseAtk: 331, baseDef: 235, baseSta: 181 },
+      { name: "Mega Chesnaught", baseAtk: 242, baseDef: 282, baseSta: 204, superMax: true },
+      { name: "Mega Delphox", baseAtk: 331, baseDef: 235, baseSta: 181, superMax: true },
       { name: "Mega Diancie", baseAtk: 342, baseDef: 235, baseSta: 137 },
       { name: "Mega Dragonite", baseAtk: 299, baseDef: 255, baseSta: 209, superMax: true },
       { name: "Mega Falinks", baseAtk: 267, baseDef: 229, baseSta: 163, superMax: true },
       { name: "Mega Gallade", baseAtk: 326, baseDef: 230, baseSta: 169 },
       { name: "Mega Garchomp", baseAtk: 339, baseDef: 222, baseSta: 239 },
       { name: "Mega Gardevoir", baseAtk: 326, baseDef: 229, baseSta: 169 },
-      { name: "Mega Gengar", baseAtk: 349, baseDef: 199, baseSta: 155, superMax: true },
+      { name: "Mega Gengar", baseAtk: 349, baseDef: 199, baseSta: 155 },
       { name: "Mega Glalie", baseAtk: 252, baseDef: 168, baseSta: 190 },
-      { name: "Mega Greninja", baseAtk: 299, baseDef: 180, baseSta: 176 },
-      { name: "Mega Gyarados", baseAtk: 292, baseDef: 247, baseSta: 216, superMax: true },
+      { name: "Mega Greninja", baseAtk: 299, baseDef: 180, baseSta: 176, superMax: true },
+      { name: "Mega Gyarados", baseAtk: 292, baseDef: 247, baseSta: 216 },
       { name: "Mega Heracross", baseAtk: 334, baseDef: 223, baseSta: 190 },
       { name: "Mega Houndoom", baseAtk: 289, baseDef: 194, baseSta: 181 },
       { name: "Mega Kangaskhan", baseAtk: 246, baseDef: 210, baseSta: 233 },
@@ -185,7 +185,7 @@
       { name: "Mega Metagross", baseAtk: 300, baseDef: 289, baseSta: 190 },
       { name: "Mega Mewtwo X", baseAtk: 399, baseDef: 215, baseSta: 228, superMax: true },
       { name: "Mega Mewtwo Y", baseAtk: 413, baseDef: 223, baseSta: 228, superMax: true },
-      { name: "Mega Pidgeot", baseAtk: 280, baseDef: 175, baseSta: 195, superMax: true },
+      { name: "Mega Pidgeot", baseAtk: 280, baseDef: 175, baseSta: 195 },
       { name: "Mega Pinsir", baseAtk: 305, baseDef: 231, baseSta: 163 },
       { name: "Mega Raichu X", baseAtk: 277, baseDef: 203, baseSta: 155, superMax: true },
       { name: "Mega Raichu Y", baseAtk: 339, baseDef: 157, baseSta: 155, superMax: true },
@@ -195,9 +195,9 @@
       { name: "Mega Sceptile", baseAtk: 320, baseDef: 186, baseSta: 172 },
       { name: "Mega Scizor", baseAtk: 279, baseDef: 250, baseSta: 172 },
       { name: "Mega Sharpedo", baseAtk: 289, baseDef: 144, baseSta: 172 },
-      { name: "Mega Skarmory", baseAtk: 273, baseDef: 228, baseSta: 163 },
+      { name: "Mega Skarmory", baseAtk: 273, baseDef: 228, baseSta: 163, superMax: true },
       { name: "Mega Slowbro", baseAtk: 224, baseDef: 259, baseSta: 216 },
-      { name: "Mega Starmie", baseAtk: 276, baseDef: 229, baseSta: 155 },
+      { name: "Mega Starmie", baseAtk: 276, baseDef: 229, baseSta: 155, superMax: true },
       { name: "Mega Steelix", baseAtk: 212, baseDef: 327, baseSta: 181 },
       { name: "Mega Swampert", baseAtk: 283, baseDef: 218, baseSta: 225 },
       { name: "Mega Tyranitar", baseAtk: 309, baseDef: 276, baseSta: 225 },
@@ -223,7 +223,8 @@
     // Two Mega Level systems have now been confirmed in-game, and it isn't
     // clear yet whether the graduated one is permanent or tied to the current
     // GO Fest "Mega Ascension" event window — so both are offered as a toggle
-    // rather than picking one.
+    // rather than picking one. Event mode is the current DEFAULT while the
+    // event is live; switch back to Regular once it ends.
     //
     // REGULAR: only a fully-maxed Super Max Mega gives a boost, +5 levels.
     // Confirmed via exact CP+HP matches on Mega Mewtwo X, Mewtwo Y, Dragonite,
@@ -241,17 +242,22 @@
     //                   the same minimal Base state as some of the +2 cases.
     //                   So the variance isn't fully explained by evolve
     //                   count either; there may be a per-species component.
-    //   High      +4  — confirmed on Mega Dragonite and Mega Mewtwo X (x2)
-    //   Max       +5 typical — confirmed exactly on Mega Venusaur, BUT ALSO
-    //                   confirmed exactly at +6 on a heavily-evolved Mega
-    //                   Audino (evolve count unknown but described as
-    //                   "evolved a long time").
-    //   Super Max +5  — confirmed on Mega Mewtwo X — the SAME number as Max
-    //                   at the time it was tested. The original tweet's
-    //                   claimed +6 (Max) and +8 (Super Max) were both wrong
-    //                   for the individuals tested. Given Max and even Base
-    //                   turned out not to be fixed, Super Max may not be
-    //                   either — treat with the same caution as the others.
+    //   High      +4  — confirmed on Mega Dragonite (x2) and Mega Mewtwo X
+    //                   (x2), always exact. The most reliable tier so far.
+    //   Max       +5 is the strongly confirmed default — 16 species now
+    //               exact at +5 (Venusaur, Gyarados, Gengar, Pidgeot,
+    //               Dragonite, Mewtwo X, Metagross, Charizard X, Charizard Y,
+    //               Rayquaza, Groudon, Kyogre, Latios, Garchomp, Lucario),
+    //               spanning both Super-Max-capable and non-Super-Max
+    //               species alike — so it isn't tied to Super-Max
+    //               eligibility after all. Only 3 confirmed exceptions sit
+    //               at +6 instead: Mega Audino, Beedrill, Slowbro (their
+    //               final tier, no Super Max for any of them). Whatever
+    //               actually separates those three isn't identified — they
+    //               get an explicit override in MAX_TIER_OVERRIDES below;
+    //               everything else defaults to +5.
+    //   Super Max +5  — confirmed on Mega Mewtwo X and Mega Dragonite, both
+    //                   exactly matching their own Max-tier boost.
     //
     // Bottom line: Event mode's numbers are a best-effort estimate, not a
     // guarantee. The underlying mechanic likely depends on something beyond
@@ -264,9 +270,9 @@
     // in Regular mode; assumed by extension elsewhere).
     const MODES = {
       regular: { '1': 0, '2': 0, '3': 0, '4': 5 },
-      event:   { '1': 2, '2': 4, '3': 5, '4': 5 }
+      event:   { '1': 2, '2': 4, '3': 6, '4': 5 }
     };
-    let currentMode = 'regular';
+    let currentMode = 'event';
 
     function populateDropdown() {
       pokemonSelect.innerHTML = '';
@@ -325,7 +331,7 @@
 
       megaLevelSelect.querySelector('option[value="1"]').textContent = `Base Mega (1st evolve, +${boosts['1']} Levels)`;
       megaLevelSelect.querySelector('option[value="2"]').textContent = `High Mega (7th evolve, +${boosts['2']} Levels)`;
-      megaLevelSelect.querySelector('option[value="3"]').textContent = `Max Mega (30th evolve, +${boosts['3']} Levels)`;
+      megaLevelSelect.querySelector('option[value="3"]').textContent = `Max Mega (30th evolve, +${getMegaBoost('3', p)} Levels)`;
 
       if (p && p.superMax) {
         level4Option.disabled = false;
@@ -336,7 +342,7 @@
         level4Option.textContent = 'Super Max Mega (not available for this Pokémon)';
       }
 
-      const currentBoost = boosts[megaLevelSelect.value] || 0;
+      const currentBoost = getMegaBoost(megaLevelSelect.value, p);
       const overriding = currentBoost > 0;
       bestBuddyInput.disabled = overriding;
       bestBuddyLabel.classList.toggle('opacity-40', overriding);
@@ -352,11 +358,43 @@
       modeEventBtn.classList.toggle('active', !isRegular);
       modeDescription.textContent = isRegular
         ? 'Only a fully-maxed Super Max Mega changes CP (+5 levels). Confirmed against multiple in-game screenshots.'
-        : 'Base +2, High +4, Max/Super Max +5 shown below are typical, most-common values — but exact boosts have varied even within the same tier (Base confirmed at both +2 and +2.5; Max at both +5 and +6). Treat the shown number as a starting estimate, not a guarantee.';
+        : 'Base +2, High +4, Max +5 shown below are strongly confirmed typical values (Max verified exactly on 16 different species). A few known exceptions exist: Base once seen at +2.5, and Max at +6 for Audino, Beedrill, and Slowbro specifically.';
       document.getElementById('cpResultNote').textContent = isRegular
         ? 'CP is identical at Base / High / Max Mega. Only Super Max (on Pokémon that have it) changes CP, +5 levels.'
-        : 'High +4 is solidly confirmed. Base and Max/Super Max are usually +2 and +5, but have each been confirmed at a different value too (+2.5 and +6) — the real boost isn\'t always the typical one.';
+        : 'High +4 and Max +5 are both solidly confirmed across many species. Base is usually +2 (once seen at +2.5). Audino, Beedrill, and Slowbro are known exceptions with Max +6 instead of +5.';
       calculate();
+    }
+
+    // Max tier's boost depends on whether the species can go further to Super
+    // Max. Confirmed on two Super-Max-capable species (Mega Dragonite and
+    // Mega Mewtwo X): their Max tier gives +5, the SAME as their Super Max —
+    // there's no extra CP for the additional evolutions beyond Max for these
+    // species. Species WITHOUT a Super Max tier (Mega Audino, Beedrill,
+    // Slowbro) instead get +6 at Max, since Max is their final tier.
+    // Max tier's real boost isn't reliably predictable from Super-Max
+    // eligibility alone — confirmed exceptions exist on both sides (see the
+    // comment block above), so directly-tested species get an explicit
+    // override here rather than a guessed rule. Anything not listed falls
+    // back to the general default: +5 for Super-Max-capable species, +6 for
+    // everything else (still just a typical value, not guaranteed).
+    // Max tier: +5 is now the overwhelmingly confirmed default (16 species
+    // exact: Venusaur, Gyarados, Gengar, Pidgeot, Dragonite, Mewtwo X,
+    // Metagross, Charizard X, Charizard Y, Rayquaza, Groudon, Kyogre,
+    // Latios, Garchomp, Lucario — plus Mewtwo X again via Super Max). Only
+    // 3 confirmed exceptions sit at +6 instead: Audino, Beedrill, Slowbro.
+    // Whatever separates those three from everything else isn't identified.
+    const MAX_TIER_OVERRIDES = {
+      'Mega Audino': 6,
+      'Mega Beedrill': 6,
+      'Mega Slowbro': 6,
+    };
+
+    function getMegaBoost(tier, p) {
+      if (currentMode === 'event' && tier === '3') {
+        if (p && MAX_TIER_OVERRIDES[p.name] !== undefined) return MAX_TIER_OVERRIDES[p.name];
+        return 5;
+      }
+      return MODES[currentMode][tier] || 0;
     }
 
     function calculate() {
@@ -368,7 +406,7 @@
       let level = parseFloat(levelInput.value);
 
       // Mega Level boost (per the active mode) overrides Best Buddy's +1.
-      level += MODES[currentMode][megaLevelSelect.value] || 0;
+      level += getMegaBoost(megaLevelSelect.value, p);
 
       const ivA = parseInt(atkIv.value) || 0;
       const ivD = parseInt(defIv.value) || 0;
@@ -398,7 +436,7 @@
     });
 
     populateDropdown();
-    setMode('regular');
+    setMode('event');
     calculate();
   </script>
 </body>
