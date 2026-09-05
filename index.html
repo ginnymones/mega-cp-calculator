@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokémon GO Mega Evolution CP Calculator</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .mode-btn { color: #94a3b8; }
+    .mode-btn.active { background-color: #f59e0b; color: #0f172a; }
+    .mode-btn:not(.active):hover { color: #e2e8f0; }
+  </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8 font-sans">
   <div class="max-w-4xl mx-auto space-y-6">
@@ -12,6 +17,15 @@
       <h1 class="text-3xl md:text-4xl font-extrabold text-amber-400">Mega Evolution CP Calculator</h1>
       <p class="text-slate-400 text-sm md:text-base">Calculate exact Mega Evolution CP for Pokémon GO</p>
     </header>
+
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <span class="text-sm font-medium text-slate-300">Mega Level system:</span>
+      <div class="flex bg-slate-900 rounded-lg p-1 gap-1">
+        <button id="modeRegularBtn" type="button" class="mode-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Regular</button>
+        <button id="modeEventBtn" type="button" class="mode-btn px-3 py-1.5 rounded-md text-sm font-semibold transition-colors">Mega Ascension (Event)</button>
+      </div>
+    </div>
+    <p id="modeDescription" class="text-center text-xs text-slate-500 -mt-3"></p>
 
     <main class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Controls Panel -->
@@ -63,12 +77,12 @@
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1">Mega Level</label>
           <select id="megaLevelSelect" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-400 focus:outline-none">
-            <option value="1">Base Mega (1st evolve)</option>
-            <option value="2">High Mega (7th evolve)</option>
-            <option value="3">Max Mega (30th evolve)</option>
-            <option value="4">Super Max Mega (Level 4)</option>
+            <option value="1">Base Mega (1st evolve, +2 Levels)</option>
+            <option value="2">High Mega (7th evolve, +4 Levels)</option>
+            <option value="3">Max Mega (30th evolve, +6 Levels)</option>
+            <option value="4">Super Max Mega (Level 4, +8 Levels)</option>
           </select>
-          <p id="megaLevelNote" class="text-xs text-slate-500 mt-1">Base / High / Max only unlock Candy XL / XP / rest-timer perks — they don't change CP.</p>
+          <p id="megaLevelNote" class="text-xs text-slate-500 mt-1">Every Mega Level now gives a temporary level boost while Mega Evolved.</p>
         </div>
       </section>
 
@@ -80,7 +94,7 @@
           <div class="bg-slate-900/80 rounded-lg p-6 text-center border border-slate-700/50">
             <span class="text-xs uppercase tracking-wider text-slate-400 block mb-1">Mega Evolution CP</span>
             <span id="activeCp" class="text-5xl font-black text-amber-400">0</span>
-            <p class="text-xs text-slate-500 mt-2">CP is identical at Base / High / Max Mega. Only a Super Max Mega (Level 4), on the handful of Pokémon that have it, changes CP.</p>
+            <p id="cpResultNote" class="text-xs text-slate-500 mt-2"></p>
           </div>
         </div>
 
@@ -202,19 +216,39 @@
     const staIv = document.getElementById('staIv');
     const megaLevelSelect = document.getElementById('megaLevelSelect');
     const megaLevelNote = document.getElementById('megaLevelNote');
+    const modeRegularBtn = document.getElementById('modeRegularBtn');
+    const modeEventBtn = document.getElementById('modeEventBtn');
+    const modeDescription = document.getElementById('modeDescription');
 
-    // Super Max Mega (Level 4, fully maxed — the gold-ringed 4th pip in the
-    // in-game "Meganivel" screen) is currently only available for these
-    // species. Confirmed against two independent in-game screenshots (Mega
-    // Mewtwo Y and Mega Dragonite, both level-50 power-up, both fully-maxed
-    // Super Max): it sets the effective level to (power-up level + 5), and
-    // this REPLACES Best Buddy's own +1 rather than stacking with it —
-    // toggling Best Buddy on an already-Super-Max Pokémon made no CP
-    // difference in testing. Every other Mega Level (Base/High/Max) still
-    // only unlocks Candy XL / XP / rest-timer perks and never changes CP.
-    // Note: a Super Max Pokémon that hasn't fully filled its 4th pip yet may
-    // show a smaller boost than +5 — this models the fully-maxed state.
-    const SUPER_MAX_LEVEL_BOOST = 5;
+    // Two Mega Level systems have now been confirmed in-game, and it isn't
+    // clear yet whether the graduated one is permanent or tied to the current
+    // GO Fest "Mega Ascension" event window — so both are offered as a toggle
+    // rather than picking one.
+    //
+    // REGULAR: only a fully-maxed Super Max Mega gives a boost, +5 levels.
+    // Confirmed via exact CP+HP matches on Mega Mewtwo X, Mewtwo Y, Dragonite,
+    // Gyarados, Gengar, and Pidgeot. Base/High/Max give no CP change here.
+    //
+    // EVENT (Mega Ascension): confirmed directly against multiple in-game
+    // screenshots (exact CP matches, using independently-verified base
+    // stats and pre-Mega CP as a level sanity check each time):
+    //   Base      +2  — confirmed on Primal Kyogre, Mega Venusaur, Mega
+    //                   Dragonite (x2), and Mega Mewtwo X — 5 data points
+    //   High      +4  — confirmed on Mega Dragonite and Mega Mewtwo X
+    //   Max       +5  — confirmed on Mega Venusaur
+    //   Super Max +5  — confirmed on Mega Mewtwo X — the SAME number as Max,
+    //                   not +8. The original tweet's claimed +6 (Max) and +8
+    //                   (Super Max) were both wrong; there's currently no
+    //                   extra CP for reaching Super Max beyond Max.
+    //
+    // In both modes, Best Buddy's own +1 is assumed to be overridden by the
+    // Mega Level boost rather than stacking with it (confirmed for Super Max
+    // in Regular mode; assumed by extension elsewhere).
+    const MODES = {
+      regular: { '1': 0, '2': 0, '3': 0, '4': 5 },
+      event:   { '1': 2, '2': 4, '3': 5, '4': 5 }
+    };
+    let currentMode = 'regular';
 
     function populateDropdown() {
       pokemonSelect.innerHTML = '';
@@ -261,28 +295,50 @@
 
     // Show/enable the "Super Max Mega (Level 4)" option only for Pokémon that
     // actually have it, and fall back to Max Mega if a Pokémon without it was
-    // left selected on Level 4. Also grey out Best Buddy while Super Max is
-    // active, since Super Max overrides it rather than stacking with it.
+    // left selected on Level 4. Label each tier with its boost for the
+    // currently selected mode. Grey out Best Buddy whenever a Mega Level
+    // boost is active in the current mode, since it's assumed to override
+    // Best Buddy's +1 rather than stack with it.
     function refreshMegaLevelOptions() {
       const p = POKEMON_DATA[pokemonSelect.value];
+      const boosts = MODES[currentMode];
       const level4Option = megaLevelSelect.querySelector('option[value="4"]');
       const bestBuddyLabel = document.getElementById('bestBuddyLabel');
-      const isSuperMaxActive = p && p.superMax && megaLevelSelect.value === '4';
+
+      megaLevelSelect.querySelector('option[value="1"]').textContent = `Base Mega (1st evolve, +${boosts['1']} Levels)`;
+      megaLevelSelect.querySelector('option[value="2"]').textContent = `High Mega (7th evolve, +${boosts['2']} Levels)`;
+      megaLevelSelect.querySelector('option[value="3"]').textContent = `Max Mega (30th evolve, +${boosts['3']} Levels)`;
 
       if (p && p.superMax) {
         level4Option.disabled = false;
-        level4Option.textContent = 'Super Max Mega (Level 4, +5 Levels)';
-        megaLevelNote.textContent = 'Base / High / Max only unlock perks (no CP change). Fully-maxed Super Max sets the level to power-up level +5, overriding Best Buddy rather than stacking with it.';
+        level4Option.textContent = `Super Max Mega (Level 4, +${boosts['4']} Levels)`;
       } else {
         if (megaLevelSelect.value === '4') megaLevelSelect.value = '3';
         level4Option.disabled = true;
         level4Option.textContent = 'Super Max Mega (not available for this Pokémon)';
-        megaLevelNote.textContent = 'Base / High / Max only unlock Candy XL / XP / rest-timer perks — they don\'t change CP. This Pokémon doesn\'t have a Super Max tier.';
       }
 
-      bestBuddyInput.disabled = isSuperMaxActive;
-      bestBuddyLabel.classList.toggle('opacity-40', isSuperMaxActive);
-      bestBuddyLabel.title = isSuperMaxActive ? 'Super Max Mega already includes a bigger boost than Best Buddy — it overrides it rather than stacking.' : '';
+      const currentBoost = boosts[megaLevelSelect.value] || 0;
+      const overriding = currentBoost > 0;
+      bestBuddyInput.disabled = overriding;
+      bestBuddyLabel.classList.toggle('opacity-40', overriding);
+      bestBuddyLabel.title = overriding
+        ? 'This Mega Level\'s boost is assumed to override Best Buddy\'s +1 rather than stack with it.'
+        : '';
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      const isRegular = mode === 'regular';
+      modeRegularBtn.classList.toggle('active', isRegular);
+      modeEventBtn.classList.toggle('active', !isRegular);
+      modeDescription.textContent = isRegular
+        ? 'Only a fully-maxed Super Max Mega changes CP (+5 levels). Confirmed against multiple in-game screenshots.'
+        : 'Every Mega Level boosts CP: Base +2, High +4, Max & Super Max +5 (same boost — confirmed via screenshots, no extra CP for reaching Super Max beyond Max right now).';
+      document.getElementById('cpResultNote').textContent = isRegular
+        ? 'CP is identical at Base / High / Max Mega. Only Super Max (on Pokémon that have it) changes CP, +5 levels.'
+        : 'Base +2, High +4, Max +5, Super Max +5 effective levels while Mega Evolved. All four confirmed via in-game screenshots.';
+      calculate();
     }
 
     function calculate() {
@@ -293,13 +349,8 @@
       const p = POKEMON_DATA[pokemonSelect.value];
       let level = parseFloat(levelInput.value);
 
-      const isSuperMax = p.superMax && megaLevelSelect.value === '4';
-      if (isSuperMax) {
-        // Super Max overrides Best Buddy's +1 rather than stacking with it.
-        level += SUPER_MAX_LEVEL_BOOST;
-      } else if (bestBuddyInput.checked) {
-        level += 1;
-      }
+      // Mega Level boost (per the active mode) overrides Best Buddy's +1.
+      level += MODES[currentMode][megaLevelSelect.value] || 0;
 
       const ivA = parseInt(atkIv.value) || 0;
       const ivD = parseInt(defIv.value) || 0;
@@ -321,12 +372,15 @@
       levelNumberInput.value = 50;
       calculate();
     });
+    modeRegularBtn.addEventListener('click', () => setMode('regular'));
+    modeEventBtn.addEventListener('click', () => setMode('event'));
     [pokemonSelect, bestBuddyInput, atkIv, defIv, staIv, megaLevelSelect].forEach(el => {
       el.addEventListener('input', calculate);
       el.addEventListener('change', calculate);
     });
 
     populateDropdown();
+    setMode('regular');
     calculate();
   </script>
 </body>
