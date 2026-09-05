@@ -77,10 +77,10 @@
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1">Mega Level</label>
           <select id="megaLevelSelect" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-400 focus:outline-none">
-            <option value="1">Base Mega (1st evolve, +2 Levels)</option>
-            <option value="2">High Mega (7th evolve, +4 Levels)</option>
-            <option value="3">Max Mega (30th evolve, +6 Levels)</option>
-            <option value="4">Super Max Mega (Level 4, +8 Levels)</option>
+            <option value="1">Base Mega (1st evolve)</option>
+            <option value="2">High Mega (7th evolve)</option>
+            <option value="3">Max Mega (30th evolve)</option>
+            <option value="4">Super Max Mega (Level 4)</option>
           </select>
           <p id="megaLevelNote" class="text-xs text-slate-500 mt-1">Every Mega Level now gives a temporary level boost while Mega Evolved.</p>
         </div>
@@ -229,17 +229,35 @@
     // Confirmed via exact CP+HP matches on Mega Mewtwo X, Mewtwo Y, Dragonite,
     // Gyarados, Gengar, and Pidgeot. Base/High/Max give no CP change here.
     //
-    // EVENT (Mega Ascension): confirmed directly against multiple in-game
-    // screenshots (exact CP matches, using independently-verified base
-    // stats and pre-Mega CP as a level sanity check each time):
-    //   Base      +2  — confirmed on Primal Kyogre, Mega Venusaur, Mega
-    //                   Dragonite (x2), and Mega Mewtwo X — 5 data points
-    //   High      +4  — confirmed on Mega Dragonite and Mega Mewtwo X
-    //   Max       +5  — confirmed on Mega Venusaur
-    //   Super Max +5  — confirmed on Mega Mewtwo X — the SAME number as Max,
-    //                   not +8. The original tweet's claimed +6 (Max) and +8
-    //                   (Super Max) were both wrong; there's currently no
-    //                   extra CP for reaching Super Max beyond Max.
+    // EVENT (Mega Ascension): the numbers below are typical/starting values,
+    // not fixed constants — confirmed exact matches exist at MULTIPLE
+    // different boost amounts for the SAME nominal tier, so treat every
+    // number here as an estimate:
+    //   Base      +2 typical — confirmed on Primal Kyogre, Mega Venusaur,
+    //                   Mega Dragonite (x2), and Mega Mewtwo X (x2) — 6 data
+    //                   points. BUT also confirmed exactly at +2.5 on a Mega
+    //                   Raichu Y independently verified (via the in-game
+    //                   Mega Level screen) to have Mega Evolved only once —
+    //                   the same minimal Base state as some of the +2 cases.
+    //                   So the variance isn't fully explained by evolve
+    //                   count either; there may be a per-species component.
+    //   High      +4  — confirmed on Mega Dragonite and Mega Mewtwo X (x2)
+    //   Max       +5 typical — confirmed exactly on Mega Venusaur, BUT ALSO
+    //                   confirmed exactly at +6 on a heavily-evolved Mega
+    //                   Audino (evolve count unknown but described as
+    //                   "evolved a long time").
+    //   Super Max +5  — confirmed on Mega Mewtwo X — the SAME number as Max
+    //                   at the time it was tested. The original tweet's
+    //                   claimed +6 (Max) and +8 (Super Max) were both wrong
+    //                   for the individuals tested. Given Max and even Base
+    //                   turned out not to be fixed, Super Max may not be
+    //                   either — treat with the same caution as the others.
+    //
+    // Bottom line: Event mode's numbers are a best-effort estimate, not a
+    // guarantee. The underlying mechanic likely depends on something beyond
+    // just which of the 4 tiers is unlocked (evolve count and/or species are
+    // both plausible factors, neither fully confirmed) — real verification
+    // per-Pokémon is the only way to be sure during this event.
     //
     // In both modes, Best Buddy's own +1 is assumed to be overridden by the
     // Mega Level boost rather than stacking with it (confirmed for Super Max
@@ -334,10 +352,10 @@
       modeEventBtn.classList.toggle('active', !isRegular);
       modeDescription.textContent = isRegular
         ? 'Only a fully-maxed Super Max Mega changes CP (+5 levels). Confirmed against multiple in-game screenshots.'
-        : 'Every Mega Level boosts CP: Base +2, High +4, Max & Super Max +5 (same boost — confirmed via screenshots, no extra CP for reaching Super Max beyond Max right now).';
+        : 'Base +2, High +4, Max/Super Max +5 shown below are typical, most-common values — but exact boosts have varied even within the same tier (Base confirmed at both +2 and +2.5; Max at both +5 and +6). Treat the shown number as a starting estimate, not a guarantee.';
       document.getElementById('cpResultNote').textContent = isRegular
         ? 'CP is identical at Base / High / Max Mega. Only Super Max (on Pokémon that have it) changes CP, +5 levels.'
-        : 'Base +2, High +4, Max +5, Super Max +5 effective levels while Mega Evolved. All four confirmed via in-game screenshots.';
+        : 'High +4 is solidly confirmed. Base and Max/Super Max are usually +2 and +5, but have each been confirmed at a different value too (+2.5 and +6) — the real boost isn\'t always the typical one.';
       calculate();
     }
 
