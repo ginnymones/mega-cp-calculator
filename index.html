@@ -121,26 +121,37 @@
   </div>
 
   <script>
+    // CPM (level multiplier) table. Levels 12.5-29.5 were previously wrong in
+    // this tool — a transcription error had this range using values that
+    // happened to be correct-looking but were actually offset from the real
+    // table, while levels 1-12 and 30+ were always correct. This silently
+    // broke CP calculations for any Pokémon in the low-to-mid teens/twenties
+    // level range throughout this project, and was the real cause behind
+    // several previously "unresolved" discrepancies (Steelix, Kangaskhan,
+    // Pinsir, Victreebel, Raichu X/Y, Slowbro, and others all touched this
+    // broken range at one point or another). Fixed by cross-referencing an
+    // independent CPM source and confirming exact matches against real
+    // screenshots at levels 20 and 20.5 that had never resolved before.
     const CPM = {
-      1: 0.094, 1.5: 0.135137432, 2: 0.16639787, 2.5: 0.192686068, 3: 0.21573247, 3.5: 0.236572661, 4: 0.25572005, 4.5: 0.273530381, 5: 0.29024988,
-      5.5: 0.306057377, 6: 0.3210877, 6.5: 0.335445036, 7: 0.34921268, 7.5: 0.362457751, 8: 0.3752355, 8.5: 0.387592406, 9: 0.39956536,
-      9.5: 0.411180811, 10: 0.42250001, 10.5: 0.432926409, 11: 0.44310755, 11.5: 0.453059958, 12: 0.46241348, 12.5: 0.471608874, 13: 0.48068684,
-      13.5: 0.489651259, 14: 0.49808622, 14.5: 0.506510294, 15: 0.51739395, 15.5: 0.52648719, 16: 0.5354115, 16.5: 0.54417032, 17: 0.5528091,
-      17.5: 0.56130691, 18: 0.56958826, 18.5: 0.57774786, 19: 0.5857643, 19.5: 0.593655, 20: 0.61, 20.5: 0.6166256, 21: 0.6230132,
-      21.5: 0.6293687, 22: 0.63558606, 22.5: 0.64171134, 23: 0.64774373, 23.5: 0.65368582, 24: 0.6595133, 24.5: 0.66525718, 25: 0.6709117,
-      25.5: 0.67648119, 26: 0.6819645, 26.5: 0.6873635, 27: 0.692688, 27.5: 0.69793087, 28: 0.703084, 28.5: 0.7081561, 29: 0.7131649,
-      29.5: 0.7181007, 30: 0.7317, 30.5: 0.734741, 31: 0.7377695, 31.5: 0.74078557, 32: 0.74378943, 32.5: 0.7467816, 33: 0.74976104,
-      33.5: 0.75272809, 34: 0.75568551, 34.5: 0.75863088, 35: 0.76156384, 35.5: 0.76448606, 36: 0.76739717, 36.5: 0.77029726, 37: 0.7731865,
-      37.5: 0.77606518, 38: 0.778933, 38.5: 0.7817904, 39: 0.78463697, 39.5: 0.7874736, 40: 0.7903001, 40.5: 0.7928039, 41: 0.79530001,
-      41.5: 0.79780001, 42: 0.8003, 42.5: 0.80279999, 43: 0.8053, 43.5: 0.8078, 44: 0.81029999, 44.5: 0.81279999, 45: 0.81529999,
-      45.5: 0.81779999, 46: 0.82029999, 46.5: 0.82279999, 47: 0.82529999, 47.5: 0.82779999, 48: 0.83029999, 48.5: 0.83279999, 49: 0.83529999,
-      49.5: 0.83779999, 50: 0.84029999, 50.5: 0.84279999, 51: 0.84529999, 51.5: 0.84779999, 52: 0.85029999, 52.5: 0.85279999, 53: 0.85529999,
-      53.5: 0.85779999, 54: 0.86029999, 54.5: 0.86279999, 55: 0.86529999
+      1: 0.094, 1.5: 0.13513743, 2: 0.16639787, 2.5: 0.19265091, 3: 0.21573247, 3.5: 0.23657266, 4: 0.25572005, 4.5: 0.27353038, 5: 0.29024988,
+      5.5: 0.30605738, 6: 0.3210876, 6.5: 0.33544503, 7: 0.34921268, 7.5: 0.36245775, 8: 0.37523559, 8.5: 0.38759241, 9: 0.39956728,
+      9.5: 0.41119355, 10: 0.42250001, 10.5: 0.43292641, 11: 0.44310755, 11.5: 0.45305995, 12: 0.46279839, 12.5: 0.47233608, 13: 0.48168495,
+      13.5: 0.49085581, 14: 0.49985844, 14.5: 0.50870176, 15: 0.51739395, 15.5: 0.52594251, 16: 0.53435433, 16.5: 0.54263576, 17: 0.55079269,
+      17.5: 0.5588306, 18: 0.56675452, 18.5: 0.57456915, 19: 0.58227891, 19.5: 0.58988791, 20: 0.59740001, 20.5: 0.60482366, 21: 0.61215729,
+      21.5: 0.61940411, 22: 0.62656713, 22.5: 0.63364918, 23: 0.64065295, 23.5: 0.64758096, 24: 0.65443563, 24.5: 0.66121926, 25: 0.667934,
+      25.5: 0.6745819, 26: 0.68116492, 26.5: 0.68768491, 27: 0.69414365, 27.5: 0.70054289, 28: 0.70688421, 28.5: 0.7131691, 29: 0.71939909,
+      29.5: 0.72557562, 30: 0.7317, 30.5: 0.73474101, 31: 0.73776948, 31.5: 0.74078557, 32: 0.74378943, 32.5: 0.74678121, 33: 0.74976104,
+      33.5: 0.75272911, 34: 0.75568551, 34.5: 0.75863037, 35: 0.76156384, 35.5: 0.76448607, 36: 0.76739717, 36.5: 0.77029727, 37: 0.7731865,
+      37.5: 0.77606495, 38: 0.77893275, 38.5: 0.78179006, 39: 0.78463697, 39.5: 0.78747358, 40: 0.79030001, 40.5: 0.79280395, 41: 0.79530001,
+      41.5: 0.79780392, 42: 0.8003, 42.5: 0.80280389, 43: 0.8053, 43.5: 0.80780386, 44: 0.81029999, 44.5: 0.81280383, 45: 0.81529999,
+      45.5: 0.81780381, 46: 0.82029998, 46.5: 0.82280378, 47: 0.82529998, 47.5: 0.82780375, 48: 0.83029997, 48.5: 0.83280375, 49: 0.83530003,
+      49.5: 0.83780376, 50: 0.84030002, 50.5: 0.84280373, 51: 0.84530002, 51.5: 0.8478037, 52: 0.85030001, 52.5: 0.85280368, 53: 0.85530001,
+      53.5: 0.85780365, 54: 0.8603, 54.5: 0.86280362, 55: 0.8653
     };
 
     function getCPM(level) {
       if (CPM[level] !== undefined) return CPM[level];
-      return 0.84029999 + (level - 50) * 0.005;
+      return 0.84030002 + (level - 50) * 0.005;
     }
 
     const POKEMON_DATA = [
@@ -153,7 +164,7 @@
       { name: "Mega Ampharos", baseAtk: 294, baseDef: 203, baseSta: 207 },
       { name: "Mega Audino", baseAtk: 147, baseDef: 239, baseSta: 230 },
       { name: "Mega Banette", baseAtk: 312, baseDef: 160, baseSta: 162 },
-      { name: "Mega Beedrill", baseAtk: 303, baseDef: 148, baseSta: 163 },
+      { name: "Mega Beedrill", baseAtk: 303, baseDef: 148, baseSta: 163, superMax: true },
       { name: "Mega Blastoise", baseAtk: 264, baseDef: 237, baseSta: 188 },
       { name: "Mega Blaziken", baseAtk: 329, baseDef: 168, baseSta: 190 },
       { name: "Mega Camerupt", baseAtk: 253, baseDef: 183, baseSta: 172 },
@@ -223,17 +234,23 @@
     // Two Mega Level systems have now been confirmed in-game, and it isn't
     // clear yet whether the graduated one is permanent or tied to the current
     // GO Fest "Mega Ascension" event window — so both are offered as a toggle
-    // rather than picking one. Event mode is the current DEFAULT while the
-    // event is live; switch back to Regular once it ends.
+    // rather than picking one. The event has now ENDED (as of this update);
+    // Regular is the default again. Event mode is kept available/selectable
+    // in case a similar event runs again, but its numbers reflect what was
+    // true during that specific event window and may not carry over.
     //
-    // REGULAR: only a fully-maxed Super Max Mega gives a boost, +5 levels.
-    // Confirmed via exact CP+HP matches on Mega Mewtwo X, Mewtwo Y, Dragonite,
-    // Gyarados, Gengar, and Pidgeot. Base/High/Max give no CP change here.
+    // REGULAR (current, post-event): Super Max Mega gives +2 levels (e.g.
+    // power-up level 50 -> effective level 52) — updated after the event
+    // ended, since Niantic evidently kept a permanent Super Max boost but
+    // set it lower than the event's own numbers. Base/High/Max still give no
+    // CP change in Regular mode. (Historical note: before and during the
+    // event, Super Max in Regular mode was confirmed at +5/level 55 instead
+    // — that was true for its time but is superseded by this +2 update.)
     //
-    // EVENT (Mega Ascension): the numbers below are typical/starting values,
-    // not fixed constants — confirmed exact matches exist at MULTIPLE
-    // different boost amounts for the SAME nominal tier, so treat every
-    // number here as an estimate:
+    // EVENT (Mega Ascension, no longer active — kept for reference): the
+    // numbers below are typical/starting values from when the event was
+    // live, not fixed constants — confirmed exact matches existed at
+    // MULTIPLE different boost amounts for the SAME nominal tier:
     //   Base      +2 typical — confirmed on Primal Kyogre, Mega Venusaur,
     //                   Mega Dragonite (x2), and Mega Mewtwo X (x2) — 6 data
     //                   points. BUT also confirmed exactly at +2.5 on a Mega
@@ -244,35 +261,30 @@
     //                   count either; there may be a per-species component.
     //   High      +4  — confirmed on Mega Dragonite (x2) and Mega Mewtwo X
     //                   (x2), always exact. The most reliable tier so far.
-    //   Max       +5 is the strongly confirmed default — 16 species now
-    //               exact at +5 (Venusaur, Gyarados, Gengar, Pidgeot,
-    //               Dragonite, Mewtwo X, Metagross, Charizard X, Charizard Y,
-    //               Rayquaza, Groudon, Kyogre, Latios, Garchomp, Lucario),
-    //               spanning both Super-Max-capable and non-Super-Max
-    //               species alike — so it isn't tied to Super-Max
-    //               eligibility after all. Only 3 confirmed exceptions sit
-    //               at +6 instead: Mega Audino, Beedrill, Slowbro (their
-    //               final tier, no Super Max for any of them). Whatever
-    //               actually separates those three isn't identified — they
-    //               get an explicit override in MAX_TIER_OVERRIDES below;
-    //               everything else defaults to +5.
+    //   Max       +5 was the strongly confirmed default — 16 species exact
+    //               at +5 (Venusaur, Gyarados, Gengar, Pidgeot, Dragonite,
+    //               Mewtwo X, Metagross, Charizard X, Charizard Y, Rayquaza,
+    //               Groudon, Kyogre, Latios, Garchomp, Lucario), spanning
+    //               both Super-Max-capable and non-Super-Max species alike.
+    //               Only 3 confirmed exceptions sat at +6 instead: Mega
+    //               Audino, Beedrill, Slowbro — still handled via the
+    //               explicit override in MAX_TIER_OVERRIDES below.
     //   Super Max +5  — confirmed on Mega Mewtwo X and Mega Dragonite, both
-    //                   exactly matching their own Max-tier boost.
+    //                   exactly matching their own Max-tier boost, during
+    //                   the event.
     //
-    // Bottom line: Event mode's numbers are a best-effort estimate, not a
-    // guarantee. The underlying mechanic likely depends on something beyond
-    // just which of the 4 tiers is unlocked (evolve count and/or species are
-    // both plausible factors, neither fully confirmed) — real verification
-    // per-Pokémon is the only way to be sure during this event.
+    // Super Max roster update: Mega Beedrill has since gained a genuine
+    // Super Max tier (previously it only had Base/High/Max, and was one of
+    // the +6-at-Max exceptions above) — added to the superMax species list.
     //
     // In both modes, Best Buddy's own +1 is assumed to be overridden by the
     // Mega Level boost rather than stacking with it (confirmed for Super Max
     // in Regular mode; assumed by extension elsewhere).
     const MODES = {
-      regular: { '1': 0, '2': 0, '3': 0, '4': 5 },
-      event:   { '1': 2, '2': 4, '3': 6, '4': 5 }
+      regular: { '1': 0, '2': 0, '3': 0, '4': 2 },
+      event:   { '1': 2, '2': 4, '3': 5, '4': 5 }
     };
-    let currentMode = 'event';
+    let currentMode = 'regular';
 
     function populateDropdown() {
       pokemonSelect.innerHTML = '';
@@ -357,11 +369,11 @@
       modeRegularBtn.classList.toggle('active', isRegular);
       modeEventBtn.classList.toggle('active', !isRegular);
       modeDescription.textContent = isRegular
-        ? 'Only a fully-maxed Super Max Mega changes CP (+5 levels). Confirmed against multiple in-game screenshots.'
-        : 'Base +2, High +4, Max +5 shown below are strongly confirmed typical values (Max verified exactly on 16 different species). A few known exceptions exist: Base once seen at +2.5, and Max at +6 for Audino, Beedrill, and Slowbro specifically.';
+        ? 'Only a fully-maxed Super Max Mega changes CP (+2 levels). Base/High/Max never change CP outside of an active event.'
+        : 'From the recent "Mega Ascension" event (now over) — kept for reference. Base +2, High +4, Max +5 were the confirmed typical values. Known exceptions: Base once seen at +2.5, and Max at +6 for Audino, Beedrill, and Slowbro specifically.';
       document.getElementById('cpResultNote').textContent = isRegular
-        ? 'CP is identical at Base / High / Max Mega. Only Super Max (on Pokémon that have it) changes CP, +5 levels.'
-        : 'High +4 and Max +5 are both solidly confirmed across many species. Base is usually +2 (once seen at +2.5). Audino, Beedrill, and Slowbro are known exceptions with Max +6 instead of +5.';
+        ? 'CP is identical at Base / High / Max Mega. Only Super Max (on Pokémon that have it) changes CP, +2 levels.'
+        : 'From the ended Mega Ascension event: High +4 and Max +5 were solidly confirmed across many species. Base was usually +2 (once seen at +2.5). Audino, Beedrill, and Slowbro were exceptions with Max +6 instead of +5.';
       calculate();
     }
 
@@ -436,7 +448,7 @@
     });
 
     populateDropdown();
-    setMode('event');
+    setMode('regular');
     calculate();
   </script>
 </body>

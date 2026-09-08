@@ -18,6 +18,20 @@
 
       <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-3">
         <div class="flex items-baseline justify-between flex-wrap gap-2">
+          <h2 class="text-lg font-bold text-slate-100">CPM table fix, event wrap-up, and Beedrill's Super Max</h2>
+          <span class="text-xs text-slate-500">September 2026</span>
+        </div>
+        <ul class="list-disc list-inside space-y-1.5 text-sm text-slate-300">
+          <li><strong>Fixed a real bug in the CP formula itself:</strong> the CPM (level multiplier) table had incorrect values specifically across levels 12.5–29.5, while levels 1–12 and 30+ were always correct. This silently affected any Pokémon calculated in that level range and was the true cause behind several discrepancies earlier in this project that had been chalked up to stale levels or imprecise IVs (Steelix, Kangaskhan, Pinsir, Victreebel, Slowbro, and the original Raichu X/Y puzzles all touched this broken range). Found by cross-referencing an independent CPM source and confirming the fix against real screenshots that had never resolved before.</li>
+          <li>The "Mega Ascension" event has ended. <strong>Regular mode is the default again.</strong> Event mode is kept available for reference/future events but no longer loads automatically.</li>
+          <li>Regular mode's Super Max boost updated: <strong>+5 → +2</strong> effective levels (e.g. power-up level 50 → effective level 52, not 55). Niantic evidently kept a permanent Super Max boost after the event but set it lower than the event's own numbers. Base/High/Max still give no CP change in Regular mode.</li>
+          <li>Mega Beedrill has gained a genuine Super Max tier and was added to the Super Max species list.</li>
+          <li>Re-verified base stats against PvPoke's live data post-event — no changes needed, everything still checks out.</li>
+        </ul>
+      </section>
+
+      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-3">
+        <div class="flex items-baseline justify-between flex-wrap gap-2">
           <h2 class="text-lg font-bold text-slate-100">Mega Ascension event mode</h2>
           <span class="text-xs text-slate-500">September 2026</span>
         </div>
