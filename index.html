@@ -34,6 +34,7 @@
         
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1">Select Pokémon</label>
+          <input type="text" id="pokemonSearch" placeholder="Search…" autocomplete="off" class="w-full mb-2 bg-slate-700 border border-slate-600 rounded-lg p-2 text-sm text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-400 focus:outline-none">
           <select id="pokemonSelect" class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-400 focus:outline-none"></select>
         </div>
 
@@ -114,6 +115,16 @@
         </div>
       </section>
     </main>
+
+    <!-- League CP Cap Planner -->
+    <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+      <div>
+        <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2 mb-1">League CP Cap Planner</h2>
+        <p class="text-xs text-slate-500 mt-2">For the Pokémon, IVs, and Mega Level selected above: the power-up cost from the current level to the highest level that keeps Mega CP under each league's cap, plus how these IVs rank among all 4,096 combinations for that cap.</p>
+      </div>
+      <button id="calcLeagueBtn" type="button" class="w-full bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold py-2.5 rounded-lg transition-colors">Calculate League Costs &amp; Rank</button>
+      <div id="leagueCards" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+    </section>
 
     <footer class="text-center text-xs text-slate-500 pt-4 pb-2 space-y-1 border-t border-slate-800">
       <p>Built by <a href="https://inginnyus.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 underline">reezachi / Ginny Mones</a>, with Claude helping out on the code. &#8226; <a href="changelog.html" class="text-amber-400 hover:text-amber-300 underline">Changelog</a></p>
@@ -219,6 +230,7 @@
     ].sort((a, b) => a.name.localeCompare(b.name));
 
     const pokemonSelect = document.getElementById('pokemonSelect');
+    const pokemonSearch = document.getElementById('pokemonSearch');
     const levelInput = document.getElementById('levelInput');
     const levelNumberInput = document.getElementById('levelNumberInput');
     const bestBuddyInput = document.getElementById('bestBuddyInput');
@@ -286,14 +298,29 @@
     };
     let currentMode = 'regular';
 
-    function populateDropdown() {
+    // Filters the dropdown's options by name (case-insensitive substring),
+    // keeping option.value as the index into POKEMON_DATA so every other
+    // lookup (POKEMON_DATA[pokemonSelect.value]) still works unmodified.
+    // Preserves the current selection across a filter when it still matches;
+    // otherwise falls back to the first visible match.
+    function populateDropdown(filterText = '') {
+      const previousValue = pokemonSelect.value;
+      const query = filterText.trim().toLowerCase();
+      const matches = POKEMON_DATA
+        .map((p, index) => ({ p, index }))
+        .filter(({ p }) => !query || p.name.toLowerCase().includes(query));
+
       pokemonSelect.innerHTML = '';
-      POKEMON_DATA.forEach((p, index) => {
+      matches.forEach(({ p, index }) => {
         const option = document.createElement('option');
         option.value = index;
         option.textContent = p.name;
         pokemonSelect.appendChild(option);
       });
+
+      if (matches.some(({ index }) => String(index) === previousValue)) {
+        pokemonSelect.value = previousValue;
+      }
     }
 
     function setIVs(a, d, s) {
@@ -440,6 +467,10 @@
       levelNumberInput.value = 50;
       calculate();
     });
+    pokemonSearch.addEventListener('input', () => {
+      populateDropdown(pokemonSearch.value);
+      calculate();
+    });
     modeRegularBtn.addEventListener('click', () => setMode('regular'));
     modeEventBtn.addEventListener('click', () => setMode('event'));
     [pokemonSelect, bestBuddyInput, atkIv, defIv, staIv, megaLevelSelect].forEach(el => {
@@ -450,6 +481,164 @@
     populateDropdown();
     setMode('regular');
     calculate();
+
+    // ============================================================
+    // League CP Cap Planner
+    // ============================================================
+    // Exact per-half-level power-up costs (Stardust, regular Candy for
+    // levels 1-39.5, XL Candy for levels 40-49.5), sourced from the
+    // Pokémon GO Fandom wiki's Power Up page. Each entry is the cost to go
+    // from that level to the next half-level.
+    const POWERUP_COST = {
+      1: {dust:200,candy:1,xl:0}, 1.5:{dust:200,candy:1,xl:0}, 2:{dust:200,candy:1,xl:0}, 2.5:{dust:200,candy:1,xl:0},
+      3:{dust:400,candy:1,xl:0}, 3.5:{dust:400,candy:1,xl:0}, 4:{dust:400,candy:1,xl:0}, 4.5:{dust:400,candy:1,xl:0},
+      5:{dust:600,candy:1,xl:0}, 5.5:{dust:600,candy:1,xl:0}, 6:{dust:600,candy:1,xl:0}, 6.5:{dust:600,candy:1,xl:0},
+      7:{dust:800,candy:1,xl:0}, 7.5:{dust:800,candy:1,xl:0}, 8:{dust:800,candy:1,xl:0}, 8.5:{dust:800,candy:1,xl:0},
+      9:{dust:1000,candy:1,xl:0}, 9.5:{dust:1000,candy:1,xl:0}, 10:{dust:1000,candy:1,xl:0}, 10.5:{dust:1000,candy:1,xl:0},
+      11:{dust:1300,candy:2,xl:0}, 11.5:{dust:1300,candy:2,xl:0}, 12:{dust:1300,candy:2,xl:0}, 12.5:{dust:1300,candy:2,xl:0},
+      13:{dust:1600,candy:2,xl:0}, 13.5:{dust:1600,candy:2,xl:0}, 14:{dust:1600,candy:2,xl:0}, 14.5:{dust:1600,candy:2,xl:0},
+      15:{dust:1900,candy:2,xl:0}, 15.5:{dust:1900,candy:2,xl:0}, 16:{dust:1900,candy:2,xl:0}, 16.5:{dust:1900,candy:2,xl:0},
+      17:{dust:2200,candy:2,xl:0}, 17.5:{dust:2200,candy:2,xl:0}, 18:{dust:2200,candy:2,xl:0}, 18.5:{dust:2200,candy:2,xl:0},
+      19:{dust:2500,candy:2,xl:0}, 19.5:{dust:2500,candy:2,xl:0}, 20:{dust:2500,candy:2,xl:0}, 20.5:{dust:2500,candy:2,xl:0},
+      21:{dust:3000,candy:3,xl:0}, 21.5:{dust:3000,candy:3,xl:0}, 22:{dust:3000,candy:3,xl:0}, 22.5:{dust:3000,candy:3,xl:0},
+      23:{dust:3500,candy:3,xl:0}, 23.5:{dust:3500,candy:3,xl:0}, 24:{dust:3500,candy:3,xl:0}, 24.5:{dust:3500,candy:3,xl:0},
+      25:{dust:4000,candy:3,xl:0}, 25.5:{dust:4000,candy:3,xl:0}, 26:{dust:4000,candy:4,xl:0}, 26.5:{dust:4000,candy:4,xl:0},
+      27:{dust:4500,candy:4,xl:0}, 27.5:{dust:4500,candy:4,xl:0}, 28:{dust:4500,candy:4,xl:0}, 28.5:{dust:4500,candy:4,xl:0},
+      29:{dust:5000,candy:4,xl:0}, 29.5:{dust:5000,candy:4,xl:0}, 30:{dust:5000,candy:4,xl:0}, 30.5:{dust:5000,candy:4,xl:0},
+      31:{dust:6000,candy:6,xl:0}, 31.5:{dust:6000,candy:6,xl:0}, 32:{dust:6000,candy:6,xl:0}, 32.5:{dust:6000,candy:6,xl:0},
+      33:{dust:7000,candy:8,xl:0}, 33.5:{dust:7000,candy:8,xl:0}, 34:{dust:7000,candy:8,xl:0}, 34.5:{dust:7000,candy:8,xl:0},
+      35:{dust:8000,candy:10,xl:0}, 35.5:{dust:8000,candy:10,xl:0}, 36:{dust:8000,candy:10,xl:0}, 36.5:{dust:8000,candy:10,xl:0},
+      37:{dust:9000,candy:12,xl:0}, 37.5:{dust:9000,candy:12,xl:0}, 38:{dust:9000,candy:12,xl:0}, 38.5:{dust:9000,candy:12,xl:0},
+      39:{dust:10000,candy:15,xl:0}, 39.5:{dust:10000,candy:15,xl:0},
+      40:{dust:10000,candy:0,xl:10}, 40.5:{dust:10000,candy:0,xl:10},
+      41:{dust:11000,candy:0,xl:10}, 41.5:{dust:11000,candy:0,xl:10},
+      42:{dust:11000,candy:0,xl:12}, 42.5:{dust:11000,candy:0,xl:12},
+      43:{dust:12000,candy:0,xl:12}, 43.5:{dust:12000,candy:0,xl:12},
+      44:{dust:12000,candy:0,xl:15}, 44.5:{dust:12000,candy:0,xl:15},
+      45:{dust:13000,candy:0,xl:15}, 45.5:{dust:13000,candy:0,xl:15},
+      46:{dust:13000,candy:0,xl:17}, 46.5:{dust:13000,candy:0,xl:17},
+      47:{dust:14000,candy:0,xl:17}, 47.5:{dust:14000,candy:0,xl:17},
+      48:{dust:14000,candy:0,xl:20}, 48.5:{dust:14000,candy:0,xl:20},
+      49:{dust:15000,candy:0,xl:20}, 49.5:{dust:15000,candy:0,xl:20},
+    };
+
+    const LEAGUES = [
+      { name: 'Great League', cap: 1500 },
+      { name: 'Ultra League', cap: 2500 },
+      { name: 'Master League', cap: Infinity },
+    ];
+
+    function costToReachLevel(fromLevel, toLevel) {
+      let dust = 0, candy = 0, xl = 0;
+      if (toLevel <= fromLevel) return { dust, candy, xl };
+      for (let lvl2 = Math.round(fromLevel * 2); lvl2 < Math.round(toLevel * 2); lvl2++) {
+        const c = POWERUP_COST[lvl2 / 2];
+        if (c) { dust += c.dust; candy += c.candy; xl += c.xl; }
+      }
+      return { dust, candy, xl };
+    }
+
+    // Binary search the highest power-up level (1-50, 0.5 steps) whose Mega
+    // CP (power-up level + Mega Level boost) stays at or under the cap.
+    // Returns null if even level 1 exceeds the cap.
+    function findMaxLevelUnderCap(baseAtk, baseDef, baseSta, ivA, ivD, ivS, boost, cap) {
+      let lo = 2, hi = 100, best = null;
+      while (lo <= hi) {
+        const mid = Math.floor((lo + hi) / 2);
+        const level = mid / 2;
+        const r = calculateCp(baseAtk, baseDef, baseSta, ivA, ivD, ivS, level + boost);
+        if (r.cp <= cap) { best = level; lo = mid + 1; }
+        else { hi = mid - 1; }
+      }
+      return best;
+    }
+
+    // Ranks the given IV combo among all 4096 possible combos for this
+    // species/tier/cap, by stat product (effAtk * effDef * effHP) at each
+    // combo's own optimal level under the cap — the standard PVP ranking
+    // metric.
+    function computeIVRank(baseAtk, baseDef, baseSta, boost, cap, ivA, ivD, ivS) {
+      const results = [];
+      for (let a = 0; a <= 15; a++) {
+        for (let d = 0; d <= 15; d++) {
+          for (let s = 0; s <= 15; s++) {
+            const level = findMaxLevelUnderCap(baseAtk, baseDef, baseSta, a, d, s, boost, cap);
+            if (level === null) continue;
+            const r = calculateCp(baseAtk, baseDef, baseSta, a, d, s, level + boost);
+            results.push({ a, d, s, level, cp: r.cp, statProduct: r.effAtk * r.effDef * r.effSta });
+          }
+        }
+      }
+      results.sort((x, y) => y.statProduct - x.statProduct);
+      let rank = null;
+      for (let i = 0; i < results.length; i++) {
+        if (results[i].a === ivA && results[i].d === ivD && results[i].s === ivS) { rank = i + 1; break; }
+      }
+      return { rank, total: results.length, best: results[0] || null };
+    }
+
+    function formatNum(n) { return n.toLocaleString('en-US'); }
+
+    function renderLeagueCards() {
+      const container = document.getElementById('leagueCards');
+      container.innerHTML = '<p class="text-sm text-slate-400 col-span-full text-center py-4">Calculating...</p>';
+
+      // Let the "Calculating..." message paint before the (brief) heavy work.
+      setTimeout(() => {
+        const p = POKEMON_DATA[pokemonSelect.value];
+        const currentLevel = parseFloat(levelInput.value);
+        const ivA = parseInt(atkIv.value) || 0;
+        const ivD = parseInt(defIv.value) || 0;
+        const ivS = parseInt(staIv.value) || 0;
+        const boost = getMegaBoost(megaLevelSelect.value, p);
+
+        container.innerHTML = '';
+        LEAGUES.forEach(league => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-900/60 rounded-lg p-4 border border-slate-700/50 space-y-2';
+
+          const targetLevel = findMaxLevelUnderCap(p.baseAtk, p.baseDef, p.baseSta, ivA, ivD, ivS, boost, league.cap);
+
+          if (targetLevel === null) {
+            card.innerHTML = `
+              <div class="text-sm font-bold text-amber-300">${league.name}${league.cap === Infinity ? '' : ` (${formatNum(league.cap)} CP)`}</div>
+              <p class="text-xs text-slate-400">Even at level 1, this Pokémon's Mega CP exceeds this cap with these IVs.</p>`;
+            container.appendChild(card);
+            return;
+          }
+
+          const atTarget = calculateCp(p.baseAtk, p.baseDef, p.baseSta, ivA, ivD, ivS, targetLevel + boost);
+          const cost = costToReachLevel(currentLevel, targetLevel);
+          const alreadyThere = targetLevel <= currentLevel;
+          const rankInfo = computeIVRank(p.baseAtk, p.baseDef, p.baseSta, boost, league.cap, ivA, ivD, ivS);
+
+          card.innerHTML = `
+            <div class="text-sm font-bold text-amber-300">${league.name}${league.cap === Infinity ? '' : ` (${formatNum(league.cap)} CP)`}</div>
+            <div class="text-xs text-slate-400">Target power-up level</div>
+            <div class="text-lg font-bold text-slate-100">${targetLevel}${targetLevel >= 50 ? ' (max)' : ''}</div>
+            <div class="text-xs text-slate-400">Mega CP at that level</div>
+            <div class="text-sm font-semibold text-slate-200">${atTarget.cp}</div>
+            <div class="border-t border-slate-700/50 pt-2 text-xs text-slate-400">Cost from current level (${currentLevel})</div>
+            ${alreadyThere
+              ? '<div class="text-xs text-emerald-400">Already at or above this level — no power-ups needed.</div>'
+              : `<div class="text-sm text-slate-200 space-y-0.5">
+                   <div>${formatNum(cost.dust)} Stardust</div>
+                   ${cost.candy > 0 ? `<div>${formatNum(cost.candy)} Candy</div>` : ''}
+                   ${cost.xl > 0 ? `<div>${formatNum(cost.xl)} Candy XL</div>` : ''}
+                 </div>`}
+            <div class="border-t border-slate-700/50 pt-2 text-xs text-slate-400">IV Rank (by stat product, under this cap)</div>
+            <div class="text-sm font-semibold text-slate-200">${rankInfo.rank ? `#${formatNum(rankInfo.rank)} / ${formatNum(rankInfo.total)}` : 'N/A'}</div>
+            ${rankInfo.best ? `
+            <div class="border-t border-slate-700/50 pt-2 text-xs text-slate-400">Best possible IV spread under this cap</div>
+            <div class="text-sm font-semibold text-slate-200">${rankInfo.best.a}/${rankInfo.best.d}/${rankInfo.best.s} @ Lv ${rankInfo.best.level} (CP ${formatNum(rankInfo.best.cp)})</div>
+            ` : ''}
+          `;
+          container.appendChild(card);
+        });
+      }, 10);
+    }
+
+    document.getElementById('calcLeagueBtn').addEventListener('click', renderLeagueCards);
   </script>
 </body>
 </html>
