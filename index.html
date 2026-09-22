@@ -100,6 +100,27 @@
             <span id="activeCp" class="text-5xl font-black text-amber-400">0</span>
             <p id="cpResultNote" class="text-xs text-slate-500 mt-2"></p>
           </div>
+
+          <div class="bg-slate-900/40 mt-3 p-4 rounded-lg border border-slate-700/40">
+            <span class="text-xs uppercase tracking-wider text-slate-400 block mb-2 text-center">Ending CP by League</span>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <div class="text-xs text-slate-400">Great</div>
+                <div id="previewGreatCp" class="text-sm font-bold text-slate-200">—</div>
+              </div>
+              <div>
+                <div class="text-xs text-slate-400">Ultra</div>
+                <div id="previewUltraCp" class="text-sm font-bold text-slate-200">—</div>
+              </div>
+              <div>
+                <div class="text-xs text-slate-400">Master</div>
+                <div id="previewMasterCp" class="text-sm font-bold text-slate-200">—</div>
+              </div>
+            </div>
+            <p class="text-xs text-slate-500 text-center mt-3">
+              <a href="#leaguePlanner" class="text-amber-400 hover:text-amber-300 underline">Calculate power up costs below</a>
+            </p>
+          </div>
         </div>
 
         <div class="bg-slate-900/40 p-4 rounded-lg border border-slate-700/40 grid grid-cols-3 text-center text-xs">
@@ -120,7 +141,7 @@
     </main>
 
     <!-- League CP Cap Planner -->
-    <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+    <section id="leaguePlanner" class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4 scroll-mt-4">
       <div>
         <h2 class="text-xl font-bold text-slate-200 border-b border-slate-700 pb-2 mb-1">League CP Cap Planner</h2>
         <p class="text-xs text-slate-500 mt-2">For the Pokémon, IVs, and Mega Level selected above: the power-up cost from the current level to the highest level that keeps Mega CP under each league's cap, plus how these IVs rank among all 4,096 combinations for that cap.</p>
@@ -350,6 +371,17 @@
       };
     }
 
+    // Declared here (rather than down by the League CP Cap Planner where it's
+    // conceptually grouped) because calculate()'s quick per-league CP preview
+    // needs it, and calculate() runs once at page load before the script
+    // reaches that section further down — a `const` declared later would
+    // still be in its temporal dead zone at that point.
+    const LEAGUES = [
+      { name: 'Great League', cap: 1500 },
+      { name: 'Ultra League', cap: 2500 },
+      { name: 'Master League', cap: Infinity },
+    ];
+
     // Keep the slider and the number box in sync with each other.
     function syncLevel(source) {
       let val = parseFloat(source.value);
@@ -446,10 +478,11 @@
       refreshMegaLevelOptions();
 
       const p = POKEMON_DATA[pokemonSelect.value];
+      const boost = getMegaBoost(megaLevelSelect.value, p);
       let level = parseFloat(levelInput.value);
 
       // Mega Level boost (per the active mode) overrides Best Buddy's +1.
-      level += getMegaBoost(megaLevelSelect.value, p);
+      level += boost;
 
       const ivA = parseInt(atkIv.value) || 0;
       const ivD = parseInt(defIv.value) || 0;
@@ -462,6 +495,30 @@
       document.getElementById('statAtk').textContent = result.effAtk;
       document.getElementById('statDef').textContent = result.effDef;
       document.getElementById('statSta').textContent = result.effSta;
+
+      updateLeaguePreview(p, ivA, ivD, ivS, boost);
+    }
+
+    // Quick-glance ending CP per league, shown right under the main Mega CP
+    // result. Reuses the same findMaxLevelUnderCap model as the full League
+    // CP Cap Planner below (just the target level + resulting CP, skipping
+    // the heavier cost/rank computation that planner does on demand).
+    const LEAGUE_PREVIEW_IDS = ['previewGreatCp', 'previewUltraCp', 'previewMasterCp'];
+    function updateLeaguePreview(p, ivA, ivD, ivS, boost) {
+      if (!p) return;
+      LEAGUES.forEach((league, i) => {
+        const el = document.getElementById(LEAGUE_PREVIEW_IDS[i]);
+        if (!el) return;
+        const targetLevel = findMaxLevelUnderCap(p.baseAtk, p.baseDef, p.baseSta, ivA, ivD, ivS, boost, league.cap);
+        if (targetLevel === null) {
+          el.textContent = 'Over cap';
+          el.className = 'text-sm font-bold text-red-400';
+        } else {
+          const atTarget = calculateCp(p.baseAtk, p.baseDef, p.baseSta, ivA, ivD, ivS, targetLevel + boost);
+          el.textContent = formatNum(atTarget.cp);
+          el.className = 'text-sm font-bold text-slate-200';
+        }
+      });
     }
 
     levelInput.addEventListener('input', () => { syncLevel(levelInput); calculate(); });
@@ -525,12 +582,6 @@
       48:{dust:14000,candy:0,xl:20}, 48.5:{dust:14000,candy:0,xl:20},
       49:{dust:15000,candy:0,xl:20}, 49.5:{dust:15000,candy:0,xl:20},
     };
-
-    const LEAGUES = [
-      { name: 'Great League', cap: 1500 },
-      { name: 'Ultra League', cap: 2500 },
-      { name: 'Master League', cap: Infinity },
-    ];
 
     function costToReachLevel(fromLevel, toLevel) {
       let dust = 0, candy = 0, xl = 0;
