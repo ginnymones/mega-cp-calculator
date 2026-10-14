@@ -4,7 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokémon GO Mega Evolution CP Calculator</title>
-  <link rel="icon" type="image/png" href="/megacp-favicon.png">
+  <link id="favicon" rel="icon" type="image/png" href="megacp-favicon.png">
+  <script>
+    // Resolves the app's own files whether it is served at its own domain or
+    // under a path (ginnymones.com/tools/mega-cp-calculator)
+    (function () {
+      var p = location.pathname;
+      var last = p.slice(p.lastIndexOf('/') + 1);
+      var dir = last.indexOf('.') === -1 ? p.replace(/\/?$/, '/') : p.slice(0, p.lastIndexOf('/') + 1);
+      document.getElementById('favicon').href = dir + 'megacp-favicon.png';
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('a[data-local]').forEach(function (a) {
+          a.href = dir + a.getAttribute('data-local');
+        });
+      });
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="/_vercel/insights/script.js"></script>
   <style>
@@ -152,7 +167,7 @@
     </section>
 
     <footer class="text-center text-xs text-slate-500 pt-4 pb-2 space-y-1 border-t border-slate-800">
-      <p>Built by <a href="https://inginnyus.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 underline">reezachi / Ginny Mones</a>, with Claude helping out on the code. &#8226; <a href="changelog.html" class="text-amber-400 hover:text-amber-300 underline">Changelog</a></p>
+      <p>Built by <a href="https://inginnyus.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 underline">reezachi / Ginny Mones</a>, with Claude helping out on the code. &#8226; <a href="changelog.html" data-local="changelog.html" class="text-amber-400 hover:text-amber-300 underline">Changelog</a></p>
     </footer>
   </div>
 
